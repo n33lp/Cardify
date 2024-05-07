@@ -1,0 +1,4 @@
+In order to run application, type:
+
+  $ cd myapp
+  $ flutter run
