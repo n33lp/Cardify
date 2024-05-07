@@ -1,0 +1,2 @@
+download the model to this directory from: https://huggingface.co/TheBloke/Mistral-7B-Instruct-v0.1-GGUF
+I did not make the model and do not take any credit to the development of it.
