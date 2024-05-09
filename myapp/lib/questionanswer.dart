@@ -26,8 +26,8 @@ class QuestionAnswer {
   /// Useful for sending data to APIs or storing in databases.
   Map<String, dynamic> toJson() {
     return {
-      'question': this.question,
-      'answer': this.answer,
+      'question': question,
+      'answer': answer,
     };
   }
 

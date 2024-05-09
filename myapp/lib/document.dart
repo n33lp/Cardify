@@ -2,6 +2,9 @@ import 'questionanswer.dart'; // Import the QuestionAnswer class if it's in a se
 
 /// A class representing a document with related data.
 class Document {
+  /// The name of the document.
+  String name;
+
   /// The date the document was created.
   DateTime createDate;
 
@@ -19,8 +22,9 @@ class Document {
 
   /// Constructs a new [Document] instance.
   ///
-  /// Requires [createDate], [lastEditedDate], [content], [questions], and an optional [isStarred] to be provided.
+  /// Requires [name], [createDate], [lastEditedDate], [content], [questions], and an optional [isStarred] to be provided.
   Document({
+    required this.name,
     required this.createDate,
     required this.lastEditedDate,
     required this.content,
@@ -33,6 +37,7 @@ class Document {
   /// Useful for serialization and deserialization with APIs.
   factory Document.fromJson(Map<String, dynamic> json) {
     return Document(
+      name: json['name'],
       createDate: DateTime.parse(json['createDate']),
       lastEditedDate: DateTime.parse(json['lastEditedDate']),
       content: json['content'],
@@ -48,6 +53,7 @@ class Document {
   /// Useful for sending data to APIs or storing in databases.
   Map<String, dynamic> toJson() {
     return {
+      'name': name,
       'createDate': createDate.toIso8601String(),
       'lastEditedDate': lastEditedDate.toIso8601String(),
       'content': content,
@@ -59,12 +65,12 @@ class Document {
   /// A utility method for displaying a formatted document details.
   @override
   String toString() {
-    return 'Created: $createDate\nLast Edited: $lastEditedDate\nContent: $content\nStarred: $isStarred\nQuestions: ${questions.map((q) => q.toString()).join('\n')}';
+    return 'Name: $name\nCreated: $createDate\nLast Edited: $lastEditedDate\nContent: $content\nStarred: $isStarred\nQuestions: ${questions.map((q) => q.toString()).join('\n')}';
   }
 }
 
-
 // var myDocument = Document(
+//   name: "My Important Document",
 //   createDate: DateTime.now(),
 //   lastEditedDate: DateTime.now(),
 //   content: "Here is some example content for the document.",
