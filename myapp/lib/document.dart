@@ -77,3 +77,15 @@ class Document {
 //   questions: [],
 //   isStarred: true  // This document is marked as important
 // );
+
+
+
+
+// Document(
+//   name:_documentNameController.text,
+//   createDate: DateTime.now(),
+//   lastEditedDate: DateTime.now(),
+//   content: "",
+//   questions: [],
+//   isStarred: false  // This document is marked as important
+// ),

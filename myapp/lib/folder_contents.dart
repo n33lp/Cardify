@@ -1,103 +1,84 @@
 import 'package:flutter/material.dart';
-import 'folder.dart'; // Import the Folder class you defined earlier
-import 'document.dart'; // Import the Document class you defined earlier
-import 'folder_contents.dart'; // Import the FolderContents widget you defined earlier
+import 'folder.dart'; // Make sure to have your Folder class defined in folder.dart
+import 'document.dart'; // And Document class in document.dart
 
-void main() {
-  runApp(MyApp());
+class FolderContents extends StatefulWidget {
+  final Folder folder;
+
+  FolderContents({Key? key, required this.folder}) : super(key: key);
+
+  @override
+  _FolderContentsState createState() => _FolderContentsState();
 }
 
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    Folder rootFolder = Folder(
-      name: "Root",
-      createDate: DateTime.now(),
-      lastEditedDate: DateTime.now(),
-      documents: [],
-      subfolders: [],
-      isStarred: false,
-    );
+class _FolderContentsState extends State<FolderContents> {
+  late Folder currentFolder;
 
-    return MaterialApp(
-      title: 'Document Manager',
-      home: FolderContents(folder: rootFolder), // Start with the root folder
-    );
+  @override
+  void initState() {
+    super.initState();
+    currentFolder = widget.folder;
   }
-}
 
-class HomeScreen extends StatefulWidget {
-  @override
-  _HomeScreenState createState() => _HomeScreenState();
-}
-
-class _HomeScreenState extends State<HomeScreen> {
-  Folder rootFolder = Folder(
-    name: "Root",
-    createDate: DateTime.now(),
-    lastEditedDate: DateTime.now(),
-    documents: [],
-    subfolders: [],
-    isStarred: false,
-  );
-
-  String searchText = "";
+  void updateFolder(Folder folder) {
+    setState(() {
+      currentFolder = folder;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    List<dynamic> items = [...rootFolder.subfolders, ...rootFolder.documents];
-    if (searchText.isNotEmpty) {
-      items = items.where((item) {
-        return item.name.toLowerCase().contains(searchText.toLowerCase());
-      }).toList();
-    }
+    List<dynamic> items = [
+      ...currentFolder.subfolders,
+      ...currentFolder.documents
+    ];
 
     return Scaffold(
       appBar: AppBar(
         title: TextField(
-          onChanged: (value) {
-            setState(() {
-              searchText = value;
-            });
-          },
           decoration: InputDecoration(
             hintText: 'Search...',
-            icon: Icon(Icons.search, color: Color.fromARGB(255, 59, 59, 59)),
+            icon: Icon(Icons.search),
             border: InputBorder.none,
           ),
-          style: TextStyle(color: Color.fromARGB(255, 0, 0, 0)),
+          style: TextStyle(color: Colors.white),
+          onChanged: (value) {
+            // Implement search filtering logic
+          },
         ),
       ),
       body: ListView.builder(
         itemCount: items.length,
         itemBuilder: (context, index) {
           var item = items[index];
-          bool isStarred =
-              (item is Folder) ? item.isStarred : (item as Document).isStarred;
           return ListTile(
             leading: Icon(item is Folder ? Icons.folder : Icons.description),
             title: Text(item.name),
             subtitle: Text("Last edited: ${item.lastEditedDate}"),
             trailing: IconButton(
-              icon: Icon(isStarred ? Icons.star : Icons.star_border),
+              icon: Icon(item.isStarred ? Icons.star : Icons.star_border),
+              color: Colors.yellow[700],
               onPressed: () {
                 setState(() {
-                  if (item is Folder) {
-                    item.isStarred = !item.isStarred;
-                  } else if (item is Document) {
-                    item.isStarred = !item.isStarred;
-                  }
+                  item.isStarred = !item.isStarred;
                 });
               },
-              color: Colors.yellow[700],
             ),
+            onTap: () {
+              if (item is Folder) {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => FolderContents(folder: item)));
+              }
+            },
           );
         },
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => _showAddOptions(context),
-        tooltip: 'Add Item',
         child: Icon(Icons.add),
+        tooltip: 'Add Item',
       ),
     );
   }
@@ -150,7 +131,7 @@ class _HomeScreenState extends State<HomeScreen> {
               child: Text('Add'),
               onPressed: () {
                 setState(() {
-                  rootFolder.subfolders.add(
+                  currentFolder.subfolders.add(
                     Folder(
                       name: _folderNameController.text,
                       createDate: DateTime.now(),
@@ -193,7 +174,7 @@ class _HomeScreenState extends State<HomeScreen> {
               child: Text('Add'),
               onPressed: () {
                 setState(() {
-                  rootFolder.documents.add(
+                  currentFolder.documents.add(
                     Document(
                       name: _documentNameController.text,
                       createDate: DateTime.now(),
