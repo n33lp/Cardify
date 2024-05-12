@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'folder.dart'; // Make sure to have your Folder class defined in folder.dart
-import 'document.dart'; // And Document class in document.dart
+import 'folder.dart';
+import 'document.dart';
+import 'navigation.dart'; // Import the navigation manager
 
 class FolderContents extends StatefulWidget {
   final Folder folder;
@@ -18,12 +19,6 @@ class _FolderContentsState extends State<FolderContents> {
   void initState() {
     super.initState();
     currentFolder = widget.folder;
-  }
-
-  void updateFolder(Folder folder) {
-    setState(() {
-      currentFolder = folder;
-    });
   }
 
   @override
@@ -51,28 +46,7 @@ class _FolderContentsState extends State<FolderContents> {
         itemCount: items.length,
         itemBuilder: (context, index) {
           var item = items[index];
-          return ListTile(
-            leading: Icon(item is Folder ? Icons.folder : Icons.description),
-            title: Text(item.name),
-            subtitle: Text("Last edited: ${item.lastEditedDate}"),
-            trailing: IconButton(
-              icon: Icon(item.isStarred ? Icons.star : Icons.star_border),
-              color: Colors.yellow[700],
-              onPressed: () {
-                setState(() {
-                  item.isStarred = !item.isStarred;
-                });
-              },
-            ),
-            onTap: () {
-              if (item is Folder) {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => FolderContents(folder: item)));
-              }
-            },
-          );
+          return buildItemTile(item);
         },
       ),
       floatingActionButton: FloatingActionButton(
@@ -80,6 +54,72 @@ class _FolderContentsState extends State<FolderContents> {
         child: Icon(Icons.add),
         tooltip: 'Add Item',
       ),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: 0, // Update this based on current view
+        onTap: (index) {
+          switch (index) {
+            case 0:
+              // NavigationManager.navigateTo(context, "FolderContents");
+              print("Home");
+              break;
+            case 1:
+              NavigationManager.navigateTo(context, "Starred");
+              print("Starred");
+              break;
+            case 2:
+              NavigationManager.navigateTo(context, "Trash");
+              print("Trash");
+              break;
+            case 3:
+              NavigationManager.navigateTo(context, "Profile");
+              print("Profile");
+              break;
+          }
+        },
+        items: const [
+          BottomNavigationBarItem(
+              icon: Icon(Icons.home, color: Colors.black), label: 'Home'),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.star, color: Colors.black), label: 'Starred'),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.delete, color: Colors.black),
+            label: 'Trash',
+          ),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.account_circle, color: Colors.black),
+              label: 'Profile'),
+        ],
+        selectedItemColor: Colors.black, // Keeps selected item label black
+        unselectedItemColor: Colors.grey, // Keeps unselected item label black
+        showUnselectedLabels:
+            true, // Explicitly ensure unselected labels are shown
+        showSelectedLabels: true, // Explicitly ensure selected labels are shown
+      ),
+    );
+  }
+
+  Widget buildItemTile(dynamic item) {
+    return ListTile(
+      leading: Icon(item is Folder ? Icons.folder : Icons.description),
+      title: Text(item.name),
+      subtitle: Text("Last edited: ${item.lastEditedDate}"),
+      trailing: IconButton(
+        icon: Icon(item.isStarred ? Icons.star : Icons.star_border),
+        color: Colors.yellow[700],
+        onPressed: () {
+          setState(() {
+            item.isStarred = !item.isStarred;
+          });
+        },
+      ),
+      onTap: () {
+        if (item is Folder) {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => FolderContents(folder: item)));
+        }
+      },
     );
   }
 
@@ -109,7 +149,7 @@ class _FolderContentsState extends State<FolderContents> {
   }
 
   void _addFolder(BuildContext context) {
-    Navigator.pop(context); // Close the bottom sheet
+    Navigator.pop(context);
     TextEditingController _folderNameController = TextEditingController();
     showDialog(
       context: context,
@@ -123,9 +163,7 @@ class _FolderContentsState extends State<FolderContents> {
           actions: <Widget>[
             TextButton(
               child: Text('Cancel'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
+              onPressed: () => Navigator.of(context).pop(),
             ),
             TextButton(
               child: Text('Add'),
@@ -152,7 +190,7 @@ class _FolderContentsState extends State<FolderContents> {
   }
 
   void _addDocument(BuildContext context) {
-    Navigator.pop(context); // Close the bottom sheet
+    Navigator.pop(context);
     TextEditingController _documentNameController = TextEditingController();
     showDialog(
       context: context,
@@ -166,9 +204,7 @@ class _FolderContentsState extends State<FolderContents> {
           actions: <Widget>[
             TextButton(
               child: Text('Cancel'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
+              onPressed: () => Navigator.of(context).pop(),
             ),
             TextButton(
               child: Text('Add'),

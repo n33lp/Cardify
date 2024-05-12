@@ -65,7 +65,7 @@ class _HomeScreenState extends State<HomeScreen> {
             icon: Icon(Icons.search, color: Color.fromARGB(255, 59, 59, 59)),
             border: InputBorder.none,
           ),
-          style: TextStyle(color: Color.fromARGB(255, 0, 0, 0)),
+          style: TextStyle(color: Colors.black),
         ),
       ),
       body: ListView.builder(
