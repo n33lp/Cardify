@@ -15,7 +15,7 @@ class FolderContents extends StatefulWidget {
 
 class _FolderContentsState extends State<FolderContents> {
   late Folder currentFolder;
-
+  String searchText = "";
   @override
   void initState() {
     super.initState();
@@ -28,19 +28,26 @@ class _FolderContentsState extends State<FolderContents> {
       ...currentFolder.subfolders,
       ...currentFolder.documents
     ];
+    if (searchText.isNotEmpty) {
+      items = items.where((item) {
+        return item.name.toLowerCase().contains(searchText.toLowerCase());
+      }).toList();
+    }
 
     return Scaffold(
       appBar: AppBar(
         title: TextField(
+          onChanged: (value) {
+            setState(() {
+              searchText = value;
+            });
+          },
           decoration: InputDecoration(
             hintText: 'Search...',
             icon: Icon(Icons.search),
             border: InputBorder.none,
           ),
-          style: TextStyle(color: Colors.white),
-          onChanged: (value) {
-            // Implement search filtering logic
-          },
+          style: TextStyle(color: Colors.black),
         ),
       ),
       body: ListView.builder(
