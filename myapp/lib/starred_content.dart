@@ -15,7 +15,7 @@ class StarredContents extends StatefulWidget {
 
 class _StarredContentsState extends State<StarredContents> {
   late Folder currentFolder;
-
+  String searchText = "";
   @override
   void initState() {
     super.initState();
@@ -29,19 +29,26 @@ class _StarredContentsState extends State<StarredContents> {
       ...currentFolder.documents
     ];
     items = items.where((item) => item.isStarred).toList();
+    if (searchText.isNotEmpty) {
+      items = items.where((item) {
+        return item.name.toLowerCase().contains(searchText.toLowerCase());
+      }).toList();
+    }
 
     return Scaffold(
       appBar: AppBar(
         title: TextField(
+          onChanged: (value) {
+            setState(() {
+              searchText = value;
+            });
+          },
           decoration: InputDecoration(
             hintText: 'Search...',
             icon: Icon(Icons.search),
             border: InputBorder.none,
           ),
-          style: TextStyle(color: Colors.white),
-          onChanged: (value) {
-            // Implement search filtering logic
-          },
+          style: TextStyle(color: Colors.black),
         ),
       ),
       body: ListView.builder(
