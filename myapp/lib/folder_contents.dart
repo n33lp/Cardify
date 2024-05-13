@@ -60,7 +60,7 @@ class _FolderContentsState extends State<FolderContents> {
         itemCount: items.length,
         itemBuilder: (context, index) {
           var item = items[index];
-          return buildItemTile(item);
+          return buildItemTile(item, index);
         },
       ),
       floatingActionButton: FloatingActionButton(
@@ -74,6 +74,7 @@ class _FolderContentsState extends State<FolderContents> {
           switch (index) {
             case 0:
               // NavigationManager.navigateTo(context, "FolderContents");
+              // move to parent folder
               print("Home");
               break;
             case 1:
@@ -133,30 +134,57 @@ class _FolderContentsState extends State<FolderContents> {
     );
   }
 
-  Widget buildItemTile(dynamic item) {
-    return ListTile(
-      leading: Icon(item is Folder ? Icons.folder : Icons.description),
-      title: Text(item.name),
-      subtitle: Text("Last edited: ${item.lastEditedDate}"),
-      trailing: IconButton(
-        icon: Icon(item.isStarred ? Icons.star : Icons.star_border),
-        color: Colors.yellow[700],
-        onPressed: () {
-          setState(() {
-            item.isStarred = !item.isStarred;
-          });
+  Widget buildItemTile(dynamic item, int index) {
+    return Dismissible(
+      key: Key('item_$index'), // Using index as part of the key
+      direction: DismissDirection.endToStart,
+      onDismissed: (direction) {
+        setState(() {
+          moveToTrash(item);
+        });
+      },
+      background: Container(
+        color: Colors.red,
+        alignment: Alignment.centerRight,
+        child: Icon(Icons.delete, color: Colors.white),
+        padding: EdgeInsets.symmetric(horizontal: 20.0),
+      ),
+      child: ListTile(
+        leading: Icon(item is Folder ? Icons.folder : Icons.description),
+        title: Text(item.name),
+        subtitle: Text("Last edited: ${item.lastEditedDate}"),
+        trailing: IconButton(
+          icon: Icon(item.isStarred ? Icons.star : Icons.star_border),
+          color: Colors.yellow[700],
+          onPressed: () {
+            setState(() {
+              item.isStarred = !item.isStarred;
+            });
+          },
+        ),
+        onTap: () {
+          if (item is Folder) {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => FolderContents(
+                        folder: item, trashFolder: trashFolder)));
+          }
         },
       ),
-      onTap: () {
-        if (item is Folder) {
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) =>
-                      FolderContents(folder: item, trashFolder: trashFolder)));
-        }
-      },
     );
+  }
+
+  void moveToTrash(dynamic item) {
+    setState(() {
+      if (item is Folder) {
+        trashFolder.subfolders.add(item);
+        currentFolder.subfolders.remove(item);
+      } else if (item is Document) {
+        trashFolder.documents.add(item);
+        currentFolder.documents.remove(item);
+      }
+    });
   }
 
   void _showAddOptions(BuildContext context) {
