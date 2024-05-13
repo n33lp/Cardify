@@ -2,18 +2,18 @@ import 'package:flutter/material.dart';
 import 'folder.dart';
 import 'document.dart';
 import 'navigation.dart'; // Import the navigation manager
-import 'starred_content.dart'; // Import the StarredContents widget you defined earlier
+import 'folder_contents.dart'; // Import the FolderContents widget you defined earlier
 
-class FolderContents extends StatefulWidget {
+class StarredContents extends StatefulWidget {
   final Folder folder;
 
-  FolderContents({Key? key, required this.folder}) : super(key: key);
+  StarredContents({Key? key, required this.folder}) : super(key: key);
 
   @override
-  _FolderContentsState createState() => _FolderContentsState();
+  _StarredContentsState createState() => _StarredContentsState();
 }
 
-class _FolderContentsState extends State<FolderContents> {
+class _StarredContentsState extends State<StarredContents> {
   late Folder currentFolder;
 
   @override
@@ -28,6 +28,7 @@ class _FolderContentsState extends State<FolderContents> {
       ...currentFolder.subfolders,
       ...currentFolder.documents
     ];
+    items = items.where((item) => item.isStarred).toList();
 
     return Scaffold(
       appBar: AppBar(
@@ -60,26 +61,26 @@ class _FolderContentsState extends State<FolderContents> {
         onTap: (index) {
           switch (index) {
             case 0:
-              // NavigationManager.navigateTo(context, "FolderContents");
+              // NavigationManager.navigateTo(context, "StarredContents");
               print("Home");
-              break;
-            case 1:
-              // NavigationManager.navigateTo(context, "Starred");
-              print("Starred");
               // Navigator.pushReplacement(
               //   context,
               //   MaterialPageRoute(
               //       builder: (context) =>
-              //           StarredContents(folder: currentFolder)),
+              //           FolderContents(folder: currentFolder)),
               // );
               Navigator.pushReplacement(
                 context,
                 PageRouteBuilder(
                   pageBuilder: (context, animation1, animation2) =>
-                      StarredContents(folder: currentFolder),
+                      FolderContents(folder: currentFolder),
                   transitionDuration: Duration(seconds: 1),
                 ),
               );
+              break;
+            case 1:
+              NavigationManager.navigateTo(context, "Starred");
+              print("Starred");
               break;
             case 2:
               NavigationManager.navigateTo(context, "Trash");
@@ -132,7 +133,7 @@ class _FolderContentsState extends State<FolderContents> {
           Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => FolderContents(folder: item)));
+                  builder: (context) => StarredContents(folder: item)));
         }
       },
     );

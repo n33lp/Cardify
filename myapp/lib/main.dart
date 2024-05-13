@@ -18,7 +18,14 @@ class MyApp extends StatelessWidget {
       subfolders: [],
       isStarred: false,
     );
-
+    Folder trashFolder = Folder(
+      name: "Trash",
+      createDate: DateTime.now(),
+      lastEditedDate: DateTime.now(),
+      documents: [],
+      subfolders: [],
+      isStarred: false,
+    );
     return MaterialApp(
       title: 'Document Manager',
       home: FolderContents(folder: rootFolder), // Start with the root folder
