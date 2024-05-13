@@ -4,6 +4,7 @@ import 'document.dart';
 import 'navigation.dart'; // Import the navigation manager
 import 'folder_contents.dart'; // Import the FolderContents widget you defined earlier
 import 'trashbin.dart';
+import 'profile.dart'; // Import the ProfilePage widget you defined earlier
 
 class StarredContents extends StatefulWidget {
   final Folder folder;
@@ -106,8 +107,14 @@ class _StarredContentsState extends State<StarredContents> {
               );
               break;
             case 3:
-              NavigationManager.navigateTo(context, "Profile");
+              // NavigationManager.navigateTo(context, "Profile");
               print("Profile");
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => ProfilePage(
+                        folder: currentFolder, trashFolder: trashFolder)),
+              );
               break;
           }
         },
