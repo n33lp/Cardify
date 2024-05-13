@@ -3,11 +3,14 @@ import 'folder.dart';
 import 'document.dart';
 import 'navigation.dart'; // Import the navigation manager
 import 'folder_contents.dart'; // Import the FolderContents widget you defined earlier
+import 'trashbin.dart';
 
 class StarredContents extends StatefulWidget {
   final Folder folder;
+  final Folder trashFolder;
 
-  StarredContents({Key? key, required this.folder}) : super(key: key);
+  StarredContents({Key? key, required this.folder, required this.trashFolder})
+      : super(key: key);
 
   @override
   _StarredContentsState createState() => _StarredContentsState();
@@ -15,11 +18,13 @@ class StarredContents extends StatefulWidget {
 
 class _StarredContentsState extends State<StarredContents> {
   late Folder currentFolder;
+  late Folder trashFolder;
   String searchText = "";
   @override
   void initState() {
     super.initState();
     currentFolder = widget.folder;
+    trashFolder = widget.trashFolder; // Initialize trashFolder from the widget
   }
 
   @override
@@ -80,7 +85,8 @@ class _StarredContentsState extends State<StarredContents> {
                 context,
                 PageRouteBuilder(
                   pageBuilder: (context, animation1, animation2) =>
-                      FolderContents(folder: currentFolder),
+                      FolderContents(
+                          folder: currentFolder, trashFolder: trashFolder),
                   transitionDuration: Duration(seconds: 1),
                 ),
               );
@@ -90,8 +96,14 @@ class _StarredContentsState extends State<StarredContents> {
               print("Starred");
               break;
             case 2:
-              NavigationManager.navigateTo(context, "Trash");
+              // NavigationManager.navigateTo(context, "Trash");
               print("Trash");
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => TrashContents(
+                        folder: currentFolder, trashFolder: trashFolder)),
+              );
               break;
             case 3:
               NavigationManager.navigateTo(context, "Profile");
@@ -140,7 +152,8 @@ class _StarredContentsState extends State<StarredContents> {
           Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => StarredContents(folder: item)));
+                  builder: (context) =>
+                      StarredContents(folder: item, trashFolder: trashFolder)));
         }
       },
     );
@@ -199,7 +212,7 @@ class _StarredContentsState extends State<StarredContents> {
                       lastEditedDate: DateTime.now(),
                       documents: [],
                       subfolders: [],
-                      isStarred: false,
+                      isStarred: true,
                     ),
                   );
                 });
@@ -240,7 +253,7 @@ class _StarredContentsState extends State<StarredContents> {
                       lastEditedDate: DateTime.now(),
                       content: "",
                       questions: [],
-                      isStarred: false,
+                      isStarred: true,
                     ),
                   );
                 });

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'folder_contents.dart'; // Import other views as necessary
 
 class NavigationManager {
   static void navigateTo(BuildContext context, String targetView) {

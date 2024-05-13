@@ -28,7 +28,9 @@ class MyApp extends StatelessWidget {
     );
     return MaterialApp(
       title: 'Document Manager',
-      home: FolderContents(folder: rootFolder), // Start with the root folder
+      home: FolderContents(
+          folder: rootFolder,
+          trashFolder: trashFolder), // Start with the root folder
     );
   }
 }

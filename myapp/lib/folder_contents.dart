@@ -3,11 +3,14 @@ import 'folder.dart';
 import 'document.dart';
 import 'navigation.dart'; // Import the navigation manager
 import 'starred_content.dart'; // Import the StarredContents widget you defined earlier
+import 'trashbin.dart'; // Import the TrashContents widget you defined earlier
 
 class FolderContents extends StatefulWidget {
   final Folder folder;
+  final Folder trashFolder;
 
-  FolderContents({Key? key, required this.folder}) : super(key: key);
+  FolderContents({Key? key, required this.folder, required this.trashFolder})
+      : super(key: key);
 
   @override
   _FolderContentsState createState() => _FolderContentsState();
@@ -15,11 +18,14 @@ class FolderContents extends StatefulWidget {
 
 class _FolderContentsState extends State<FolderContents> {
   late Folder currentFolder;
+  late Folder trashFolder;
+
   String searchText = "";
   @override
   void initState() {
     super.initState();
     currentFolder = widget.folder;
+    trashFolder = widget.trashFolder; // Initialize trashFolder from the widget
   }
 
   @override
@@ -83,14 +89,21 @@ class _FolderContentsState extends State<FolderContents> {
                 context,
                 PageRouteBuilder(
                   pageBuilder: (context, animation1, animation2) =>
-                      StarredContents(folder: currentFolder),
+                      StarredContents(
+                          folder: currentFolder, trashFolder: trashFolder),
                   transitionDuration: Duration(seconds: 1),
                 ),
               );
               break;
             case 2:
-              NavigationManager.navigateTo(context, "Trash");
+              // NavigationManager.navigateTo(context, "Trash");
               print("Trash");
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => TrashContents(
+                        folder: currentFolder, trashFolder: trashFolder)),
+              );
               break;
             case 3:
               NavigationManager.navigateTo(context, "Profile");
@@ -139,7 +152,8 @@ class _FolderContentsState extends State<FolderContents> {
           Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => FolderContents(folder: item)));
+                  builder: (context) =>
+                      FolderContents(folder: item, trashFolder: trashFolder)));
         }
       },
     );
