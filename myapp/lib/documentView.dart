@@ -1,44 +1,80 @@
+import 'package:dart_quill_delta/src/delta/delta.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'document.dart' as myDoc; // Your Document model
+import 'dart:convert';
 
 class DocumentView extends StatefulWidget {
   final myDoc.Document document;
+  final Function(myDoc.Document)
+      onUpdate; // Callback to update the document in the parent
 
-  DocumentView({Key? key, required this.document}) : super(key: key);
+  DocumentView({Key? key, required this.document, required this.onUpdate})
+      : super(key: key);
 
   @override
   _DocumentViewState createState() => _DocumentViewState();
 }
 
 class _DocumentViewState extends State<DocumentView> {
-  late TextEditingController _nameController;
+  late TextEditingController nameController;
   late QuillController _quillController;
 
   @override
   void initState() {
     super.initState();
-    _nameController = TextEditingController(text: widget.document.name);
+    // print("Document name is: ${widget.document.name}");
+    nameController = TextEditingController(text: widget.document.name);
+    // print("nameController name is: ${nameController.text}");
     _quillController = QuillController(
         document: Document()..insert(0, widget.document.content),
         selection: TextSelection.collapsed(offset: 0));
-    initDocument(); // This will load and potentially update the document.
+    initDocument(
+        widget.document); // This will load and potentially update the document.
+    // initDocument2();
   }
 
-  void initDocument() async {
+  void initDocument(myDoc.Document currentDoc) async {
     myDoc.Document loadedDoc = await myDoc.Document.load();
     setState(() {
-      _nameController.text =
-          loadedDoc.name; // Update the controller with loaded name
+      nameController.text = currentDoc.name;
+      // print("myDoc name is: ${currentDoc.name}");
+      // print("nameController.text in initDocument is: ${nameController.text}");
+      // Convert the JSON string back to a Delta
+      List<dynamic> jsonDelta =
+          jsonDecode(currentDoc.content); // This should be a List
+
+      Delta delta = Delta.fromJson(jsonDelta);
+      // Use the delta to create a new document for the QuillController
       _quillController = QuillController(
-          document: Document()..insert(0, loadedDoc.content),
+          document: Document.fromDelta(delta),
+          selection: TextSelection.collapsed(offset: 0));
+    });
+  }
+
+  void initDocument2() async {
+    myDoc.Document loadedDoc = await myDoc.Document.load();
+    setState(() {
+      nameController.text = loadedDoc.name;
+      // print("myDoc name is: ${loadedDoc.name}");
+      // print("nameController.text in initDocument is: ${nameController.text}");
+      // Convert the JSON string back to a Delta
+      List<dynamic> jsonDelta =
+          jsonDecode(loadedDoc.content); // This should be a List
+      // print('jsonDelta: ${jsonDelta}');
+      // print("loadedDoc.content: ${loadedDoc.content}");
+      Delta delta = Delta.fromJson(jsonDelta);
+      // print('delta: ${delta}');
+      // Use the delta to create a new document for the QuillController
+      _quillController = QuillController(
+          document: Document.fromDelta(delta),
           selection: TextSelection.collapsed(offset: 0));
     });
   }
 
   @override
   void dispose() {
-    _nameController.dispose();
+    nameController.dispose();
     _quillController.dispose();
     super.dispose();
   }
@@ -48,7 +84,7 @@ class _DocumentViewState extends State<DocumentView> {
     return Scaffold(
       appBar: AppBar(
         title: TextField(
-          controller: _nameController,
+          controller: nameController,
           style: TextStyle(color: Colors.black),
           decoration: InputDecoration(
             hintText: 'Document Name',
@@ -107,12 +143,24 @@ class _DocumentViewState extends State<DocumentView> {
 
   void _saveDocument() async {
     setState(() {
-      widget.document.name =
-          _nameController.text; // Update the in-memory object
-      widget.document.content = _quillController.document
-          .toPlainText(); // Update the in-memory object
+      widget.document.name = nameController.text;
+      // print('_quillController.document ${_quillController.document}');
+      // print(
+      //     '_quillController.document.toDelta() ${_quillController.document.toDelta()}');
+      // print(
+      //     '_quillController.document.toDelta().toJson() ${_quillController.document.toDelta().toJson()}');
+      widget.document.content = jsonEncode(_quillController.document
+          .toDelta()
+          .toJson()); // Save the full delta as JSON
     });
-    await widget.document.save(); // Persist changes
-    Navigator.pop(context); // Optionally pop or confirm save to the user
+    print("saving as widget.document.content ${widget.document.content}");
+    await widget.document
+        .save(); // Make sure your save method handles this JSON appropriately
+    widget.onUpdate(
+        widget.document); // Call the callback with the updated document
+    Navigator.pop(context);
+    // print("widget.document.name ${widget.document.name}");
+
+    // dispose();
   }
 }

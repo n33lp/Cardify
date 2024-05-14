@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'folder.dart';
 import 'document.dart';
@@ -189,10 +191,21 @@ class _FolderContentsState extends State<FolderContents> {
                         folder: item, trashFolder: trashFolder)));
           } else if (item is Document) {
             print('moving to document view');
+            print(item.name);
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => DocumentView(document: item),
+                builder: (context) => DocumentView(
+                  document: item,
+                  onUpdate: (updatedDocument) {
+                    setState(() {
+                      int index = currentFolder.documents.indexOf(item);
+                      if (index != -1) {
+                        currentFolder.documents[index] = updatedDocument;
+                      }
+                    });
+                  },
+                ),
               ),
             );
           }
@@ -300,16 +313,19 @@ class _FolderContentsState extends State<FolderContents> {
               child: Text('Add'),
               onPressed: () {
                 setState(() {
-                  currentFolder.documents.add(
-                    Document(
-                      name: _documentNameController.text,
-                      createDate: DateTime.now(),
-                      lastEditedDate: DateTime.now(),
-                      content: "",
-                      questions: [],
-                      isStarred: false,
-                    ),
+                  var addingDocument = Document(
+                    name: _documentNameController.text,
+                    createDate: DateTime.now(),
+                    lastEditedDate: DateTime.now(),
+                    content: jsonEncode([
+                      {"insert": "\n"}
+                    ]),
+                    questions: [],
+                    isStarred: false,
                   );
+                  currentFolder.documents.add(addingDocument);
+                  print(
+                      'adding as addingDocument.content: ${addingDocument.content}');
                 });
                 Navigator.of(context).pop();
               },
