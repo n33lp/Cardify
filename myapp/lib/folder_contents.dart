@@ -5,6 +5,7 @@ import 'navigation.dart'; // Import the navigation manager
 import 'starred_content.dart'; // Import the StarredContents widget you defined earlier
 import 'trashbin.dart'; // Import the TrashContents widget you defined earlier
 import 'profile.dart'; // Import the ProfilePage widget you defined earlier
+import 'documentView.dart'; // Import the DocumentView widget you defined earlier
 
 class FolderContents extends StatefulWidget {
   final Folder folder;
@@ -186,6 +187,14 @@ class _FolderContentsState extends State<FolderContents> {
                 MaterialPageRoute(
                     builder: (context) => FolderContents(
                         folder: item, trashFolder: trashFolder)));
+          } else if (item is Document) {
+            print('moving to document view');
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => DocumentView(document: item),
+              ),
+            );
           }
         },
       ),
