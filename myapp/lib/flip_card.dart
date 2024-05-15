@@ -32,9 +32,7 @@ class _FlipCardPageState extends State<FlipCardPage> {
     super.initState();
     currentFolder = widget.folder;
     trashFolder = widget.trashFolder;
-    _pageController = PageController(
-        viewportFraction:
-            0.8); // Adjust viewport fraction for better swiping experience
+    _pageController = PageController(viewportFraction: 0.8);
     currentPage = 0;
   }
 
@@ -45,20 +43,14 @@ class _FlipCardPageState extends State<FlipCardPage> {
         title: Text('Questions'),
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
-          onPressed: () {
-            print("Back button pressed");
-            Navigator.of(context)
-                .pop(); // Ensures returning to the previous screen
-            Navigator.pushReplacement(
-              context,
-              PageRouteBuilder(
-                pageBuilder: (context, animation1, animation2) =>
-                    FolderContents(
-                        folder: currentFolder, trashFolder: trashFolder),
-                transitionDuration: Duration(seconds: 1),
-              ),
-            );
-          },
+          onPressed: () => Navigator.pushReplacement(
+            context,
+            PageRouteBuilder(
+              pageBuilder: (context, animation1, animation2) => FolderContents(
+                  folder: currentFolder, trashFolder: trashFolder),
+              transitionDuration: Duration(seconds: 1),
+            ),
+          ),
         ),
         actions: [
           IconButton(
@@ -85,74 +77,64 @@ class _FlipCardPageState extends State<FlipCardPage> {
                     direction: FlipDirection.HORIZONTAL,
                     front: Container(
                       padding: EdgeInsets.all(30),
-                      child: Center(
-                        child: Column(
-                          mainAxisSize: MainAxisSize
-                              .min, // Use 'min' to reduce excess space and center the column itself
-                          children: [
-                            Text(
-                              "Question",
-                              textAlign: TextAlign
-                                  .center, // Center the text "Question" horizontally
-                              style: TextStyle(
-                                fontSize:
-                                    20, // Set the font size for the header
-                                fontWeight:
-                                    FontWeight.bold, // Make the header bold
-                              ),
+                      child: Stack(
+                        children: [
+                          Center(
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text("Question",
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold)),
+                                SizedBox(height: 8),
+                                Text(qa.question,
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                        fontSize: 16, color: Colors.black54)),
+                              ],
                             ),
-                            SizedBox(
-                                height:
-                                    8), // Provide some spacing between the texts
-                            Text(
-                              qa.question,
-                              textAlign: TextAlign
-                                  .center, // Center the actual question horizontally
-                              style: TextStyle(
-                                fontSize:
-                                    16, // Set the font size for the question
-                                color: Colors
-                                    .black54, // Set the text color, assuming a light background
-                              ),
+                          ),
+                          Positioned(
+                            right: 0,
+                            child: IconButton(
+                              icon: Icon(Icons.edit),
+                              onPressed: () => editQuestionAnswer(qa, index),
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
                     ),
                     back: Container(
                       padding: EdgeInsets.all(30),
-                      child: Center(
-                        child: Column(
-                          mainAxisSize: MainAxisSize
-                              .min, // Use 'min' to reduce excess space and center the column itself
-                          children: [
-                            Text(
-                              "Answer",
-                              textAlign: TextAlign
-                                  .center, // Center the text "Question" horizontally
-                              style: TextStyle(
-                                fontSize:
-                                    20, // Set the font size for the header
-                                fontWeight:
-                                    FontWeight.bold, // Make the header bold
-                              ),
+                      child: Stack(
+                        children: [
+                          Center(
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text("Answer",
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold)),
+                                SizedBox(height: 8),
+                                Text(qa.answer,
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                        fontSize: 16, color: Colors.black54)),
+                              ],
                             ),
-                            SizedBox(
-                                height:
-                                    8), // Provide some spacing between the texts
-                            Text(
-                              qa.answer,
-                              textAlign: TextAlign
-                                  .center, // Center the actual question horizontally
-                              style: TextStyle(
-                                fontSize:
-                                    16, // Set the font size for the question
-                                color: Colors
-                                    .black54, // Set the text color, assuming a light background
-                              ),
+                          ),
+                          Positioned(
+                            right: 0,
+                            child: IconButton(
+                              icon: Icon(Icons.edit),
+                              onPressed: () => editQuestionAnswer(qa, index),
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
@@ -197,5 +179,51 @@ class _FlipCardPageState extends State<FlipCardPage> {
     setState(() {
       widget.document.questions = newDocument.questions;
     });
+  }
+
+  void editQuestionAnswer(QuestionAnswer qa, int index) async {
+    TextEditingController questionController =
+        TextEditingController(text: qa.question);
+    TextEditingController answerController =
+        TextEditingController(text: qa.answer);
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Edit Question and Answer"),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              TextField(
+                controller: questionController,
+                decoration: InputDecoration(labelText: "Question"),
+              ),
+              TextField(
+                controller: answerController,
+                decoration: InputDecoration(labelText: "Answer"),
+              ),
+            ],
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text("Cancel"),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+            TextButton(
+              child: Text("Save"),
+              onPressed: () {
+                // Update the document with new values
+                setState(() {
+                  qa.question = questionController.text;
+                  qa.answer = answerController.text;
+                });
+                Navigator.of(context).pop(); // Close the dialog
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 }
