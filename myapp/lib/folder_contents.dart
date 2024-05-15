@@ -1,5 +1,5 @@
 import 'dart:convert';
-
+import 'questionanswer.dart';
 import 'package:flutter/material.dart';
 import 'folder.dart';
 import 'document.dart';
@@ -8,6 +8,7 @@ import 'starred_content.dart'; // Import the StarredContents widget you defined 
 import 'trashbin.dart'; // Import the TrashContents widget you defined earlier
 import 'profile.dart'; // Import the ProfilePage widget you defined earlier
 import 'documentView.dart'; // Import the DocumentView widget you defined earlier
+import 'flip_card.dart'; // Import the FlipCardPage widget you defined earlier
 
 class FolderContents extends StatefulWidget {
   final Folder folder;
@@ -157,18 +158,54 @@ class _FolderContentsState extends State<FolderContents> {
   Widget buildItemTile(dynamic item, int index) {
     return Dismissible(
       key: Key('item_$index'), // Using index as part of the key
-      direction: DismissDirection.endToStart,
+      // direction: DismissDirection.endToStart,
+      // onDismissed: (direction) {
+      //   setState(() {
+      //     moveToTrash(item);
+      //   });
+      // },
+      direction:
+          DismissDirection.horizontal, // Allow swiping in both directions
       onDismissed: (direction) {
-        setState(() {
+        if (direction == DismissDirection.endToStart) {
+          // Handle trash action for Document
+          print('trashing item: ${item.name}');
+
           moveToTrash(item);
-        });
+        } else if (direction == DismissDirection.startToEnd) {
+          if (item is Document) {
+            print('moving to flip card page for document: ${item.name}');
+            // Navigate to FlipCardPage for Document
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => FlipCardPage(
+                    document: item,
+                    folder: currentFolder,
+                    trashFolder: trashFolder),
+              ),
+            );
+          }
+        }
       },
       background: Container(
-        color: Colors.red,
+        color: Colors.blue, // Color for FlipCard action
+        alignment: Alignment.centerLeft,
+        child: Icon(Icons.flip, color: Colors.white),
+        padding: EdgeInsets.symmetric(horizontal: 20.0),
+      ),
+      secondaryBackground: Container(
+        color: Colors.red, // Color for delete action
         alignment: Alignment.centerRight,
         child: Icon(Icons.delete, color: Colors.white),
         padding: EdgeInsets.symmetric(horizontal: 20.0),
       ),
+      // background: Container(
+      //   color: Colors.red,
+      //   alignment: Alignment.centerRight,
+      //   child: Icon(Icons.delete, color: Colors.white),
+      //   padding: EdgeInsets.symmetric(horizontal: 20.0),
+      // ),
       child: ListTile(
         leading: Icon(item is Folder ? Icons.folder : Icons.description),
         title: Text(item.name),
@@ -313,6 +350,14 @@ class _FolderContentsState extends State<FolderContents> {
               child: Text('Add'),
               onPressed: () {
                 setState(() {
+                  // testing
+                  var qa1 = QuestionAnswer(
+                      question: "What is the capital of France?",
+                      answer: "Paris");
+                  var qa2 = QuestionAnswer(
+                      question: "What is the capital of Canada?",
+                      answer: "Ottawa");
+                  // keep
                   var addingDocument = Document(
                     name: _documentNameController.text,
                     createDate: DateTime.now(),
@@ -320,7 +365,7 @@ class _FolderContentsState extends State<FolderContents> {
                     content: jsonEncode([
                       {"insert": "\n"}
                     ]),
-                    questions: [],
+                    questions: [qa1, qa2],
                     isStarred: false,
                   );
                   currentFolder.documents.add(addingDocument);
