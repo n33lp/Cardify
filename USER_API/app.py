@@ -20,7 +20,7 @@ class User(db.Model):
      
 with open("CREDS.json") as f:
     data = json.load(f)
-    LLM=data['key']
+    LLM=data['LLM_key']
    
 # APP usage
 @app.route('/register', methods=['POST'])
@@ -63,7 +63,8 @@ def login():
 # General usage
 @app.route('/index', methods=['GET'])
 def GETindex():
-    return jsonify([{'message': 'success'}]), 204
+    # return jsonify([{'message': 'success'}]), 204
+    return response('hellow world')
     
 @app.route('/all', methods=['GET'])
 def GETall():
@@ -97,4 +98,4 @@ def validateUserandToken(data):
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()
-    app.run(debug=True)
+    app.run(debug=True, host='0.0.0.0', port=5001)
