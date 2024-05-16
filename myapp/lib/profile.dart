@@ -3,6 +3,8 @@ import 'folder.dart';
 import 'folder_contents.dart';
 import 'trashbin.dart';
 import 'starred_content.dart';
+import 'UserManager.dart';
+import 'loginpage.dart';
 
 class ProfilePage extends StatefulWidget {
   final Folder folder;
@@ -33,6 +35,11 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
+    String userName = UserManager().userName ?? "Default Name";
+    String userEmail = UserManager().userEmail ?? "default@example.com";
+    String userProfilePicUrl =
+        UserManager().userProfilePicUrl ?? "https://via.placeholder.com/150";
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Profile'),
@@ -73,10 +80,7 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
             SizedBox(height: 20),
             ElevatedButton(
-              onPressed: () {
-                // Handle user logout
-                print("Logout tapped");
-              },
+              onPressed: () => logoutUser(),
               child: Text('Logout'),
               style: ElevatedButton.styleFrom(
                 backgroundColor:
@@ -165,6 +169,16 @@ class _ProfilePageState extends State<ProfilePage> {
             true, // Explicitly ensure unselected labels are shown
         showSelectedLabels: true, // Explicitly ensure selected labels are shown
       ),
+    );
+  }
+
+  void logoutUser() {
+    UserManager().clearUser();
+    print("logged out");
+    Navigator.of(context).popUntil((route) => route.isFirst);
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => LoginPage()),
     );
   }
 }
