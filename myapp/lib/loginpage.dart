@@ -52,7 +52,7 @@ class _LoginPageState extends State<LoginPage> {
         isStarred: false,
       );
 
-      Navigator.push(
+      Navigator.pushReplacement(
           context,
           MaterialPageRoute(
               builder: (context) => FolderContents(
