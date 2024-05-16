@@ -1,92 +1,58 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'folder.dart';
-import 'folder_contents.dart';
 import 'package:flutter/services.dart';
-import 'register_page.dart'; // Import the RegisterPage
 
-class LoginPage extends StatefulWidget {
+class RegisterPage extends StatefulWidget {
+  final Map<String, dynamic> apiData;
+
+  RegisterPage({required this.apiData});
+
   @override
-  _LoginPageState createState() => _LoginPageState();
+  _RegisterPageState createState() => _RegisterPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _RegisterPageState extends State<RegisterPage> {
   final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  late Map<String, dynamic> apiData;
 
-  @override
-  void initState() {
-    super.initState();
-    loadApiData();
-  }
-
-  Future<void> login() async {
-    var url = apiData['LOGIN_URL'];
+  Future<void> register() async {
+    var url = widget.apiData['REGISTER_URL'];
 
     var response = await http.post(
       Uri.parse(url),
       headers: {'Content-Type': 'application/json'},
       body: json.encode({
         'username': _usernameController.text,
+        'email': _emailController.text,
         'password': _passwordController.text,
       }),
     );
-    print(response);
-    if (response.statusCode == 200) {
-      Folder rootFolder = Folder(
-        name: "Root",
-        createDate: DateTime.now(),
-        lastEditedDate: DateTime.now(),
-        documents: [],
-        subfolders: [],
-        isStarred: false,
-      );
-      Folder trashFolder = Folder(
-        name: "Trash",
-        createDate: DateTime.now(),
-        lastEditedDate: DateTime.now(),
-        documents: [],
-        subfolders: [],
-        isStarred: false,
-      );
 
-      Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => FolderContents(
-                  folder: rootFolder, trashFolder: trashFolder)));
+    if (response.statusCode == 200) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Registration successful')),
+      );
+      Navigator.pop(context); // Go back to login page
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Invalid username or password')),
+        SnackBar(content: Text('Registration failed')),
       );
     }
-  }
-
-  Future<Map<String, dynamic>> readJson() async {
-    final String response =
-        await rootBundle.loadString('creds/USER_CREDS.json');
-    final data = await json.decode(response);
-    return data;
-  }
-
-  Future<void> loadApiData() async {
-    apiData = await readJson();
-    print('API Data loaded: $apiData');
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Login')),
+      appBar: AppBar(title: Text('Register')),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Text(
-              'Cardify Login!',
+              'Register',
               style: TextStyle(
                 fontSize: 32,
                 fontWeight: FontWeight.bold,
@@ -98,6 +64,19 @@ class _LoginPageState extends State<LoginPage> {
               decoration: InputDecoration(
                 labelText: 'Username',
                 prefixIcon: Icon(Icons.person),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
+                contentPadding:
+                    EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
+              ),
+            ),
+            SizedBox(height: 20),
+            TextField(
+              controller: _emailController,
+              decoration: InputDecoration(
+                labelText: 'Email',
+                prefixIcon: Icon(Icons.email),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10.0),
                 ),
@@ -121,36 +100,13 @@ class _LoginPageState extends State<LoginPage> {
             ),
             SizedBox(height: 30),
             ElevatedButton(
-              onPressed: login,
-              child: Text(
-                'Login',
-                style: TextStyle(fontSize: 18),
-              ),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blue,
-                foregroundColor: Colors.white,
-                padding: EdgeInsets.symmetric(horizontal: 30, vertical: 10),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10.0),
-                ),
-              ),
-            ),
-            SizedBox(height: 10),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => RegisterPage(apiData: apiData),
-                  ),
-                );
-              },
+              onPressed: register,
               child: Text(
                 'Register',
                 style: TextStyle(fontSize: 18),
               ),
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.green,
+                backgroundColor: Colors.blue,
                 foregroundColor: Colors.white,
                 padding: EdgeInsets.symmetric(horizontal: 30, vertical: 10),
                 shape: RoundedRectangleBorder(
