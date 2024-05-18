@@ -96,62 +96,7 @@ class _ProfilePageState extends State<ProfilePage> {
       ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: 0, // Update this based on current view
-        onTap: (index) {
-          switch (index) {
-            case 0:
-              // NavigationManager.navigateTo(context, "StarredContents");
-              print("Home");
-              // Navigator.pushReplacement(
-              //   context,
-              //   MaterialPageRoute(
-              //       builder: (context) =>
-              //           FolderContents(folder: currentFolder)),
-              // // );
-              Navigator.pushReplacement(
-                context,
-                PageRouteBuilder(
-                  pageBuilder: (context, animation1, animation2) =>
-                      FolderContents(
-                          folder: currentFolder, trashFolder: trashFolder),
-                  transitionDuration: Duration(seconds: 1),
-                ),
-              );
-              break;
-            case 1:
-              // NavigationManager.navigateTo(context, "Starred");
-              print("Starred");
-              Navigator.pushReplacement(
-                context,
-                PageRouteBuilder(
-                  pageBuilder: (context, animation1, animation2) =>
-                      StarredContents(
-                          folder: currentFolder, trashFolder: trashFolder),
-                  transitionDuration: Duration(seconds: 1),
-                ),
-              );
-              break;
-            case 2:
-              // NavigationManager.navigateTo(context, "Trash");
-              print("Trash");
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => TrashContents(
-                        folder: currentFolder, trashFolder: trashFolder)),
-              );
-              // Navigator.pushReplacement(
-              //   context,
-              //   MaterialPageRoute(
-              //       builder: (context) => TrashContents(
-              //           folder: currentFolder, trashFolder: trashFolder)),
-              // );
-              break;
-            case 3:
-              // NavigationManager.navigateTo(context, "Profile");
-              // print("Profile");
-              break;
-          }
-        },
+        onTap: (index) => _navigate(index),
         items: const [
           BottomNavigationBarItem(
               icon: Icon(Icons.home, color: Colors.black), label: 'Home'),
@@ -176,11 +121,46 @@ class _ProfilePageState extends State<ProfilePage> {
 
   void logoutUser() {
     UserManager().clearUser();
-    print("logged out");
     Navigator.of(context).popUntil((route) => route.isFirst);
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(builder: (context) => LoginPage()),
     );
+  }
+
+  void _navigate(int index) {
+    switch (index) {
+      case 0:
+        Navigator.pushReplacement(
+          context,
+          PageRouteBuilder(
+            pageBuilder: (context, animation1, animation2) =>
+                FolderContents(folder: currentFolder, trashFolder: trashFolder),
+            transitionDuration: Duration(seconds: 1),
+          ),
+        );
+        break;
+      case 1:
+        Navigator.pushReplacement(
+          context,
+          PageRouteBuilder(
+            pageBuilder: (context, animation1, animation2) => StarredContents(
+                folder: currentFolder, trashFolder: trashFolder),
+            transitionDuration: Duration(seconds: 1),
+          ),
+        );
+        break;
+      case 2:
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+              builder: (context) => TrashContents(
+                  folder: currentFolder, trashFolder: trashFolder)),
+        );
+
+        break;
+      case 3:
+        break;
+    }
   }
 }

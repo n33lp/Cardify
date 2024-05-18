@@ -4,7 +4,6 @@ import 'questionanswer.dart';
 import 'package:flutter/material.dart';
 import 'folder.dart';
 import 'document.dart';
-import 'navigation.dart'; // Import the navigation manager
 import 'starred_content.dart'; // Import the StarredContents widget you defined earlier
 import 'trashbin.dart'; // Import the TrashContents widget you defined earlier
 import 'profile.dart'; // Import the ProfilePage widget you defined earlier
@@ -41,7 +40,7 @@ class _FolderContentsState extends State<FolderContents> {
   }
 
   Future<bool> getQuestions(String content) async {
-    var questionsUrl = apiData['TEST_LLM_URL'];
+    var questionsUrl = apiData['QUESTIONS_LLM_URL'];
 
     try {
       var response = await http.post(
@@ -120,49 +119,7 @@ class _FolderContentsState extends State<FolderContents> {
       ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: 0, // Update this based on current view
-        onTap: (index) {
-          switch (index) {
-            case 0:
-              break;
-            case 1:
-              // NavigationManager.navigateTo(context, "Starred");
-
-              Navigator.pushReplacement(
-                context,
-                PageRouteBuilder(
-                  pageBuilder: (context, animation1, animation2) =>
-                      StarredContents(
-                          folder: currentFolder, trashFolder: trashFolder),
-                  transitionDuration: Duration(seconds: 1),
-                ),
-              );
-              break;
-            case 2:
-              // NavigationManager.navigateTo(context, "Trash");
-
-              Navigator.pushReplacement(
-                context,
-                PageRouteBuilder(
-                  pageBuilder: (context, animation1, animation2) =>
-                      TrashContents(
-                          folder: currentFolder, trashFolder: trashFolder),
-                  transitionDuration: Duration(seconds: 1),
-                ),
-              );
-              break;
-            case 3:
-              // NavigationManager.navigateTo(context, "Profile");
-
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => ProfilePage(
-                        folder: currentFolder, trashFolder: trashFolder)),
-              );
-
-              break;
-          }
-        },
+        onTap: (index) => _navigate(index),
         items: const [
           BottomNavigationBarItem(
               icon: Icon(Icons.home, color: Colors.black), label: 'Home'),
@@ -241,12 +198,6 @@ class _FolderContentsState extends State<FolderContents> {
         child: Icon(Icons.delete, color: Colors.white),
         padding: EdgeInsets.symmetric(horizontal: 20.0),
       ),
-      // background: Container(
-      //   color: Colors.red,
-      //   alignment: Alignment.centerRight,
-      //   child: Icon(Icons.delete, color: Colors.white),
-      //   padding: EdgeInsets.symmetric(horizontal: 20.0),
-      // ),
       child: ListTile(
         leading: Icon(item is Folder ? Icons.folder : Icons.description),
         title: Text(item.name),
@@ -390,12 +341,12 @@ class _FolderContentsState extends State<FolderContents> {
               onPressed: () {
                 setState(() {
                   // testing
-                  var qa1 = QuestionAnswer(
-                      question: "What is the capital of France?",
-                      answer: "Paris");
-                  var qa2 = QuestionAnswer(
-                      question: "What is the capital of Canada?",
-                      answer: "Ottawa");
+                  // var qa1 = QuestionAnswer(
+                  //     question: "What is the capital of France?",
+                  //     answer: "Paris");
+                  // var qa2 = QuestionAnswer(
+                  //     question: "What is the capital of Canada?",
+                  //     answer: "Ottawa");
                   // keep
                   var addingDocument = Document(
                     name: _documentNameController.text,
@@ -443,5 +394,40 @@ class _FolderContentsState extends State<FolderContents> {
         );
       },
     );
+  }
+
+  void _navigate(int index) {
+    switch (index) {
+      case 0:
+        break;
+      case 1:
+        Navigator.pushReplacement(
+          context,
+          PageRouteBuilder(
+            pageBuilder: (context, animation1, animation2) => StarredContents(
+                folder: currentFolder, trashFolder: trashFolder),
+            transitionDuration: Duration(seconds: 1),
+          ),
+        );
+        break;
+      case 2:
+        Navigator.pushReplacement(
+          context,
+          PageRouteBuilder(
+            pageBuilder: (context, animation1, animation2) =>
+                TrashContents(folder: currentFolder, trashFolder: trashFolder),
+            transitionDuration: Duration(seconds: 1),
+          ),
+        );
+        break;
+      case 3:
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) =>
+                  ProfilePage(folder: currentFolder, trashFolder: trashFolder)),
+        );
+        break;
+    }
   }
 }

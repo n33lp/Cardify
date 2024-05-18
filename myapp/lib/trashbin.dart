@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'folder.dart';
-import 'document.dart';
-import 'navigation.dart'; // Import the navigation manager
 import 'starred_content.dart'; // Import the StarredContents widget you defined earlier
 import 'folder_contents.dart'; // Import the FolderContents widget you defined earlier
 import 'profile.dart'; // Import the ProfilePage widget you defined earlier
@@ -61,63 +59,9 @@ class _TrashContentsState extends State<TrashContents> {
           return buildItemTile(item);
         },
       ),
-      // floatingActionButton: FloatingActionButton(
-      //   onPressed: () => _showAddOptions(context),
-      //   child: Icon(Icons.add),
-      //   tooltip: 'Add Item',
-      // ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: 0, // Update this based on current view
-        onTap: (index) {
-          switch (index) {
-            case 0:
-              // NavigationManager.navigateTo(context, "FolderContents");
-              print("Home");
-              Navigator.pushReplacement(
-                context,
-                PageRouteBuilder(
-                  pageBuilder: (context, animation1, animation2) =>
-                      FolderContents(
-                          folder: currentFolder, trashFolder: trashFolder),
-                  transitionDuration: Duration(seconds: 1),
-                ),
-              );
-              break;
-            case 1:
-              // NavigationManager.navigateTo(context, "Starred");
-              print("Starred");
-              // Navigator.pushReplacement(
-              //   context,
-              //   MaterialPageRoute(
-              //       builder: (context) =>
-              //           StarredContents(folder: currentFolder)),
-              // );
-              Navigator.pushReplacement(
-                context,
-                PageRouteBuilder(
-                  pageBuilder: (context, animation1, animation2) =>
-                      StarredContents(
-                          folder: currentFolder, trashFolder: trashFolder),
-                  transitionDuration: Duration(seconds: 1),
-                ),
-              );
-              break;
-            case 2:
-              NavigationManager.navigateTo(context, "Trash");
-              print("Trash");
-              break;
-            case 3:
-              // NavigationManager.navigateTo(context, "Profile");
-              print("Profile");
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => ProfilePage(
-                        folder: currentFolder, trashFolder: trashFolder)),
-              );
-              break;
-          }
-        },
+        onTap: (index) => _navigate(index),
         items: const [
           BottomNavigationBarItem(
               icon: Icon(Icons.home, color: Colors.black), label: 'Home'),
@@ -166,110 +110,38 @@ class _TrashContentsState extends State<TrashContents> {
     );
   }
 
-  // void _showAddOptions(BuildContext context) {
-  //   showModalBottomSheet(
-  //     context: context,
-  //     builder: (BuildContext context) {
-  //       return Container(
-  //         height: 150,
-  //         child: Column(
-  //           children: <Widget>[
-  //             ListTile(
-  //               leading: Icon(Icons.folder),
-  //               title: Text('Add Folder'),
-  //               onTap: () => _addFolder(context),
-  //             ),
-  //             ListTile(
-  //               leading: Icon(Icons.description),
-  //               title: Text('Add Document'),
-  //               onTap: () => _addDocument(context),
-  //             ),
-  //           ],
-  //         ),
-  //       );
-  //     },
-  //   );
-  // }
-
-  // void _addFolder(BuildContext context) {
-  //   Navigator.pop(context);
-  //   TextEditingController _folderNameController = TextEditingController();
-  //   showDialog(
-  //     context: context,
-  //     builder: (BuildContext context) {
-  //       return AlertDialog(
-  //         title: Text('Enter Folder Name'),
-  //         content: TextField(
-  //           controller: _folderNameController,
-  //           decoration: InputDecoration(hintText: "Folder Name"),
-  //         ),
-  //         actions: <Widget>[
-  //           TextButton(
-  //             child: Text('Cancel'),
-  //             onPressed: () => Navigator.of(context).pop(),
-  //           ),
-  //           TextButton(
-  //             child: Text('Add'),
-  //             onPressed: () {
-  //               setState(() {
-  //                 currentFolder.subfolders.add(
-  //                   Folder(
-  //                     name: _folderNameController.text,
-  //                     createDate: DateTime.now(),
-  //                     lastEditedDate: DateTime.now(),
-  //                     documents: [],
-  //                     subfolders: [],
-  //                     isStarred: false,
-  //                   ),
-  //                 );
-  //               });
-  //               Navigator.of(context).pop();
-  //             },
-  //           ),
-  //         ],
-  //       );
-  //     },
-  //   );
-  // }
-
-  // void _addDocument(BuildContext context) {
-  //   Navigator.pop(context);
-  //   TextEditingController _documentNameController = TextEditingController();
-  //   showDialog(
-  //     context: context,
-  //     builder: (BuildContext context) {
-  //       return AlertDialog(
-  //         title: Text('Enter Document Name'),
-  //         content: TextField(
-  //           controller: _documentNameController,
-  //           decoration: InputDecoration(hintText: "Document Name"),
-  //         ),
-  //         actions: <Widget>[
-  //           TextButton(
-  //             child: Text('Cancel'),
-  //             onPressed: () => Navigator.of(context).pop(),
-  //           ),
-  //           TextButton(
-  //             child: Text('Add'),
-  //             onPressed: () {
-  //               setState(() {
-  //                 currentFolder.documents.add(
-  //                   Document(
-  //                     name: _documentNameController.text,
-  //                     createDate: DateTime.now(),
-  //                     lastEditedDate: DateTime.now(),
-  //                     content: "",
-  //                     questions: [],
-  //                     isStarred: false,
-  //                   ),
-  //                 );
-  //               });
-  //               Navigator.of(context).pop();
-  //             },
-  //           ),
-  //         ],
-  //       );
-  //     },
-  //   );
-  // }
+  void _navigate(int index) {
+    switch (index) {
+      case 0:
+        Navigator.pushReplacement(
+          context,
+          PageRouteBuilder(
+            pageBuilder: (context, animation1, animation2) =>
+                FolderContents(folder: currentFolder, trashFolder: trashFolder),
+            transitionDuration: Duration(seconds: 1),
+          ),
+        );
+        break;
+      case 1:
+        Navigator.pushReplacement(
+          context,
+          PageRouteBuilder(
+            pageBuilder: (context, animation1, animation2) => StarredContents(
+                folder: currentFolder, trashFolder: trashFolder),
+            transitionDuration: Duration(seconds: 1),
+          ),
+        );
+        break;
+      case 2:
+        break;
+      case 3:
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) =>
+                  ProfilePage(folder: currentFolder, trashFolder: trashFolder)),
+        );
+        break;
+    }
+  }
 }

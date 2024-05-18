@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'folder.dart';
 import 'document.dart';
-import 'navigation.dart'; // Import the navigation manager
 import 'folder_contents.dart'; // Import the FolderContents widget you defined earlier
 import 'trashbin.dart';
 import 'profile.dart'; // Import the ProfilePage widget you defined earlier
@@ -21,6 +20,7 @@ class _StarredContentsState extends State<StarredContents> {
   late Folder currentFolder;
   late Folder trashFolder;
   String searchText = "";
+
   @override
   void initState() {
     super.initState();
@@ -71,53 +71,7 @@ class _StarredContentsState extends State<StarredContents> {
       ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: 0, // Update this based on current view
-        onTap: (index) {
-          switch (index) {
-            case 0:
-              // NavigationManager.navigateTo(context, "StarredContents");
-              print("Home");
-              // Navigator.pushReplacement(
-              //   context,
-              //   MaterialPageRoute(
-              //       builder: (context) =>
-              //           FolderContents(folder: currentFolder)),
-              // );
-              Navigator.pushReplacement(
-                context,
-                PageRouteBuilder(
-                  pageBuilder: (context, animation1, animation2) =>
-                      FolderContents(
-                          folder: currentFolder, trashFolder: trashFolder),
-                  transitionDuration: Duration(seconds: 1),
-                ),
-              );
-              break;
-            case 1:
-              NavigationManager.navigateTo(context, "Starred");
-              print("Starred");
-              break;
-            case 2:
-              // NavigationManager.navigateTo(context, "Trash");
-              print("Trash");
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => TrashContents(
-                        folder: currentFolder, trashFolder: trashFolder)),
-              );
-              break;
-            case 3:
-              // NavigationManager.navigateTo(context, "Profile");
-              print("Profile");
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => ProfilePage(
-                        folder: currentFolder, trashFolder: trashFolder)),
-              );
-              break;
-          }
-        },
+        onTap: (index) => _navigate(index),
         items: const [
           BottomNavigationBarItem(
               icon: Icon(Icons.home, color: Colors.black), label: 'Home'),
@@ -298,5 +252,38 @@ class _StarredContentsState extends State<StarredContents> {
         );
       },
     );
+  }
+
+  void _navigate(int index) {
+    switch (index) {
+      case 0:
+        Navigator.pushReplacement(
+          context,
+          PageRouteBuilder(
+            pageBuilder: (context, animation1, animation2) =>
+                FolderContents(folder: currentFolder, trashFolder: trashFolder),
+            transitionDuration: Duration(seconds: 1),
+          ),
+        );
+        break;
+      case 1:
+        break;
+      case 2:
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+              builder: (context) => TrashContents(
+                  folder: currentFolder, trashFolder: trashFolder)),
+        );
+        break;
+      case 3:
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) =>
+                  ProfilePage(folder: currentFolder, trashFolder: trashFolder)),
+        );
+        break;
+    }
   }
 }
