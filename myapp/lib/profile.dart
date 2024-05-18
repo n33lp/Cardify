@@ -21,25 +21,22 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   late Folder currentFolder;
   late Folder trashFolder;
-  // Sample user data - you can fetch these details from a user model or API
+
   String userName = "John Doe";
   String userEmail = "johndoe@example.com";
-  String userProfilePicUrl =
-      "https://via.placeholder.com/150"; // Placeholder image URL
+  String userProfilePicUrl = "https://via.placeholder.com/150";
 
   @override
   void initState() {
     super.initState();
     currentFolder = widget.folder;
-    trashFolder = widget.trashFolder; // Initialize trashFolder from the widget
+    trashFolder = widget.trashFolder;
   }
 
   @override
   Widget build(BuildContext context) {
     String userName = UserManager().userName ?? "Default Name";
     String userEmail = UserManager().userEmail ?? "default@example.com";
-    // String userProfilePicUrl =
-    //     UserManager().userProfilePicUrl ?? "https://via.placeholder.com/150";
     final decodedBytes = base64Decode(UserManager().userProfilePicUrl);
     final image = MemoryImage(decodedBytes);
     return Scaffold(
@@ -49,7 +46,6 @@ class _ProfilePageState extends State<ProfilePage> {
           IconButton(
             icon: Icon(Icons.edit),
             onPressed: () {
-              // Handle profile edit
               print("Edit profile tapped");
             },
           ),
@@ -85,17 +81,15 @@ class _ProfilePageState extends State<ProfilePage> {
               onPressed: () => logoutUser(),
               child: Text('Logout'),
               style: ElevatedButton.styleFrom(
-                backgroundColor:
-                    Colors.red, // For the background color of the button
-                foregroundColor: Colors
-                    .white, // Updated from 'onPrimary' to 'foregroundColor' for the text color
+                backgroundColor: Colors.red,
+                foregroundColor: Colors.white,
               ),
             )
           ],
         ),
       ),
       bottomNavigationBar: BottomNavigationBar(
-        currentIndex: 0, // Update this based on current view
+        currentIndex: 0,
         onTap: (index) => _navigate(index),
         items: const [
           BottomNavigationBarItem(
@@ -110,11 +104,10 @@ class _ProfilePageState extends State<ProfilePage> {
               icon: Icon(Icons.account_circle, color: Colors.black),
               label: 'Profile'),
         ],
-        selectedItemColor: Colors.black, // Keeps selected item label black
-        unselectedItemColor: Colors.grey, // Keeps unselected item label black
-        showUnselectedLabels:
-            true, // Explicitly ensure unselected labels are shown
-        showSelectedLabels: true, // Explicitly ensure selected labels are shown
+        selectedItemColor: Colors.black,
+        unselectedItemColor: Colors.grey,
+        showUnselectedLabels: true,
+        showSelectedLabels: true,
       ),
     );
   }

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'folder.dart';
-import 'starred_content.dart'; // Import the StarredContents widget you defined earlier
-import 'folder_contents.dart'; // Import the FolderContents widget you defined earlier
-import 'profile.dart'; // Import the ProfilePage widget you defined earlier
+import 'starred_content.dart';
+import 'folder_contents.dart';
+import 'profile.dart';
 
 class TrashContents extends StatefulWidget {
   final Folder folder;
@@ -24,7 +24,7 @@ class _TrashContentsState extends State<TrashContents> {
   void initState() {
     super.initState();
     currentFolder = widget.folder;
-    trashFolder = widget.trashFolder; // Initialize trashFolder from the widget
+    trashFolder = widget.trashFolder;
   }
 
   @override
@@ -60,7 +60,7 @@ class _TrashContentsState extends State<TrashContents> {
         },
       ),
       bottomNavigationBar: BottomNavigationBar(
-        currentIndex: 0, // Update this based on current view
+        currentIndex: 0,
         onTap: (index) => _navigate(index),
         items: const [
           BottomNavigationBarItem(
@@ -75,11 +75,10 @@ class _TrashContentsState extends State<TrashContents> {
               icon: Icon(Icons.account_circle, color: Colors.black),
               label: 'Profile'),
         ],
-        selectedItemColor: Colors.black, // Keeps selected item label black
-        unselectedItemColor: Colors.grey, // Keeps unselected item label black
-        showUnselectedLabels:
-            true, // Explicitly ensure unselected labels are shown
-        showSelectedLabels: true, // Explicitly ensure selected labels are shown
+        selectedItemColor: Colors.black,
+        unselectedItemColor: Colors.grey,
+        showUnselectedLabels: true,
+        showSelectedLabels: true,
       ),
     );
   }

@@ -1,13 +1,12 @@
 import 'package:dart_quill_delta/src/delta/delta.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
-import 'document.dart' as myDoc; // Your Document model
+import 'document.dart' as myDoc;
 import 'dart:convert';
 
 class DocumentView extends StatefulWidget {
   final myDoc.Document document;
-  final Function(myDoc.Document)
-      onUpdate; // Callback to update the document in the parent
+  final Function(myDoc.Document) onUpdate;
 
   DocumentView({Key? key, required this.document, required this.onUpdate})
       : super(key: key);
@@ -23,29 +22,20 @@ class _DocumentViewState extends State<DocumentView> {
   @override
   void initState() {
     super.initState();
-    // print("Document name is: ${widget.document.name}");
     nameController = TextEditingController(text: widget.document.name);
-    // print("nameController name is: ${nameController.text}");
     _quillController = QuillController(
         document: Document()..insert(0, widget.document.content),
         selection: TextSelection.collapsed(offset: 0));
-    initDocument(
-        widget.document); // This will load and potentially update the document.
-    // initDocument2();
+    initDocument(widget.document);
   }
 
   void initDocument(myDoc.Document currentDoc) async {
     myDoc.Document loadedDoc = await myDoc.Document.load();
     setState(() {
       nameController.text = currentDoc.name;
-      // print("myDoc name is: ${currentDoc.name}");
-      // print("nameController.text in initDocument is: ${nameController.text}");
-      // Convert the JSON string back to a Delta
-      List<dynamic> jsonDelta =
-          jsonDecode(currentDoc.content); // This should be a List
+      List<dynamic> jsonDelta = jsonDecode(currentDoc.content);
 
       Delta delta = Delta.fromJson(jsonDelta);
-      // Use the delta to create a new document for the QuillController
       _quillController = QuillController(
           document: Document.fromDelta(delta),
           selection: TextSelection.collapsed(offset: 0));
@@ -56,16 +46,10 @@ class _DocumentViewState extends State<DocumentView> {
     myDoc.Document loadedDoc = await myDoc.Document.load();
     setState(() {
       nameController.text = loadedDoc.name;
-      // print("myDoc name is: ${loadedDoc.name}");
-      // print("nameController.text in initDocument is: ${nameController.text}");
-      // Convert the JSON string back to a Delta
-      List<dynamic> jsonDelta =
-          jsonDecode(loadedDoc.content); // This should be a List
-      // print('jsonDelta: ${jsonDelta}');
-      // print("loadedDoc.content: ${loadedDoc.content}");
+
+      List<dynamic> jsonDelta = jsonDecode(loadedDoc.content);
+
       Delta delta = Delta.fromJson(jsonDelta);
-      // print('delta: ${delta}');
-      // Use the delta to create a new document for the QuillController
       _quillController = QuillController(
           document: Document.fromDelta(delta),
           selection: TextSelection.collapsed(offset: 0));
@@ -93,7 +77,7 @@ class _DocumentViewState extends State<DocumentView> {
           ),
           onSubmitted: (newName) {
             setState(() {
-              widget.document.name = newName; // Update document name
+              widget.document.name = newName;
             });
           },
         ),
@@ -104,8 +88,7 @@ class _DocumentViewState extends State<DocumentView> {
           ),
         ],
       ),
-      backgroundColor:
-          Colors.grey[200], // Set the background color to light grey
+      backgroundColor: Colors.grey[200],
       body: Column(
         children: [
           QuillToolbar.simple(
@@ -118,13 +101,10 @@ class _DocumentViewState extends State<DocumentView> {
           ),
           Expanded(
             child: Center(
-              // Center the 'page' in the view
               child: Container(
-                width: MediaQuery.of(context).size.width *
-                    0.9, // Adjust width as needed
-                height: MediaQuery.of(context).size.height *
-                    0.85, // Adjust height as needed
-                color: Colors.white, // Set the 'page' color to white
+                width: MediaQuery.of(context).size.width * 0.9,
+                height: MediaQuery.of(context).size.height * 0.85,
+                color: Colors.white,
                 child: QuillEditor.basic(
                   configurations: QuillEditorConfigurations(
                     controller: _quillController,
@@ -144,23 +124,12 @@ class _DocumentViewState extends State<DocumentView> {
   void _saveDocument() async {
     setState(() {
       widget.document.name = nameController.text;
-      // print('_quillController.document ${_quillController.document}');
-      // print(
-      //     '_quillController.document.toDelta() ${_quillController.document.toDelta()}');
-      // print(
-      //     '_quillController.document.toDelta().toJson() ${_quillController.document.toDelta().toJson()}');
-      widget.document.content = jsonEncode(_quillController.document
-          .toDelta()
-          .toJson()); // Save the full delta as JSON
+      widget.document.content =
+          jsonEncode(_quillController.document.toDelta().toJson());
     });
-    // print("saving as widget.document.content ${widget.document.content}");
-    await widget.document
-        .save(); // Make sure your save method handles this JSON appropriately
-    widget.onUpdate(
-        widget.document); // Call the callback with the updated document
-    Navigator.pop(context);
-    // print("widget.document.name ${widget.document.name}");
 
-    // dispose();
+    await widget.document.save();
+    widget.onUpdate(widget.document);
+    Navigator.pop(context);
   }
 }

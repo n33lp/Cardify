@@ -4,7 +4,7 @@ import 'dart:convert';
 import 'folder.dart';
 import 'folder_contents.dart';
 import 'package:flutter/services.dart';
-import 'register_page.dart'; // Import the RegisterPage
+import 'register_page.dart';
 import 'UserManager.dart';
 
 class LoginPage extends StatefulWidget {
@@ -36,7 +36,7 @@ class _LoginPageState extends State<LoginPage> {
     );
     if (response.statusCode == 200) {
       final responseData = jsonDecode(response.body);
-      // Example user data, replace with actual data from response if available
+
       UserManager().setUser(
           name: responseData['firstname'] + " " + responseData['lastname'],
           email: responseData['email'],
@@ -90,7 +90,7 @@ class _LoginPageState extends State<LoginPage> {
       body: Center(
         child: Container(
           padding: const EdgeInsets.all(16.0),
-          width: MediaQuery.of(context).size.width * 0.7, // Adjust width here
+          width: MediaQuery.of(context).size.width * 0.7,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
@@ -146,7 +146,7 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                     ),
                   ),
-                  SizedBox(width: 20), // Spacing between the buttons
+                  SizedBox(width: 20),
                   Expanded(
                     child: ElevatedButton(
                       onPressed: () {

@@ -4,11 +4,11 @@ import 'questionanswer.dart';
 import 'package:flutter/material.dart';
 import 'folder.dart';
 import 'document.dart';
-import 'starred_content.dart'; // Import the StarredContents widget you defined earlier
-import 'trashbin.dart'; // Import the TrashContents widget you defined earlier
-import 'profile.dart'; // Import the ProfilePage widget you defined earlier
-import 'documentView.dart'; // Import the DocumentView widget you defined earlier
-import 'flip_card.dart'; // Import the FlipCardPage widget you defined earlier
+import 'starred_content.dart';
+import 'trashbin.dart';
+import 'profile.dart';
+import 'documentView.dart';
+import 'flip_card.dart';
 import 'package:http/http.dart' as http;
 import 'UserManager.dart';
 import 'package:flutter/services.dart';
@@ -36,7 +36,7 @@ class _FolderContentsState extends State<FolderContents> {
     super.initState();
     loadApiData();
     currentFolder = widget.folder;
-    trashFolder = widget.trashFolder; // Initialize trashFolder from the widget
+    trashFolder = widget.trashFolder;
   }
 
   Future<bool> getQuestions(String content) async {
@@ -118,7 +118,7 @@ class _FolderContentsState extends State<FolderContents> {
         tooltip: 'Add Item',
       ),
       bottomNavigationBar: BottomNavigationBar(
-        currentIndex: 0, // Update this based on current view
+        currentIndex: 0,
         onTap: (index) => _navigate(index),
         items: const [
           BottomNavigationBarItem(
@@ -133,30 +133,27 @@ class _FolderContentsState extends State<FolderContents> {
               icon: Icon(Icons.account_circle, color: Colors.black),
               label: 'Profile'),
         ],
-        selectedItemColor: Colors.black, // Keeps selected item label black
-        unselectedItemColor: Colors.grey, // Keeps unselected item label black
-        showUnselectedLabels:
-            true, // Explicitly ensure unselected labels are shown
-        showSelectedLabels: true, // Explicitly ensure selected labels are shown
+        selectedItemColor: Colors.black,
+        unselectedItemColor: Colors.grey,
+        showUnselectedLabels: true,
+        showSelectedLabels: true,
       ),
     );
   }
 
   Widget buildItemTile(dynamic item, int index) {
     return Dismissible(
-      key: Key('item_$index'), // Using index as part of the key
-
-      direction:
-          DismissDirection.horizontal, // Allow swiping in both directions
+      key: Key('item_$index'),
+      direction: DismissDirection.horizontal,
       onDismissed: (direction) async {
         if (direction == DismissDirection.endToStart) {
           moveToTrash(item);
         } else if (direction == DismissDirection.startToEnd) {
           if (item is Document) {
             if (item.questions.isEmpty) {
-              showLoadingDialog(context); // Show the loading dialog
+              showLoadingDialog(context);
               var success = await getQuestions(item.plaintext());
-              Navigator.pop(context); // Dismiss the loading dialog
+              Navigator.pop(context);
               if (success) {
                 _addNewQuestion(item, newQuestions);
                 Navigator.push(
@@ -185,15 +182,14 @@ class _FolderContentsState extends State<FolderContents> {
           }
         }
       },
-
       background: Container(
-        color: Colors.blue, // Color for FlipCard action
+        color: Colors.blue,
         alignment: Alignment.centerLeft,
         child: Icon(Icons.flip, color: Colors.white),
         padding: EdgeInsets.symmetric(horizontal: 20.0),
       ),
       secondaryBackground: Container(
-        color: Colors.red, // Color for delete action
+        color: Colors.red,
         alignment: Alignment.centerRight,
         child: Icon(Icons.delete, color: Colors.white),
         padding: EdgeInsets.symmetric(horizontal: 20.0),
@@ -380,8 +376,7 @@ class _FolderContentsState extends State<FolderContents> {
   void showLoadingDialog(BuildContext context) {
     showDialog(
       context: context,
-      barrierDismissible:
-          false, // User must not close the dialog by tapping outside of it.
+      barrierDismissible: false,
       builder: (BuildContext context) {
         return AlertDialog(
           content: Row(

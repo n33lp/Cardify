@@ -16,10 +16,8 @@ class _RegisterPageState extends State<RegisterPage> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _firstNameController =
-      TextEditingController(); // Controller for first name
-  final TextEditingController _lastNameController =
-      TextEditingController(); // Controller for last name
+  final TextEditingController _firstNameController = TextEditingController();
+  final TextEditingController _lastNameController = TextEditingController();
 
   Future<void> register() async {
     var url = widget.apiData['REGISTER_URL'];
@@ -31,8 +29,8 @@ class _RegisterPageState extends State<RegisterPage> {
         'username': _usernameController.text,
         'email': _emailController.text,
         'password': _passwordController.text,
-        'firstname': _firstNameController.text, // Include first name
-        'lastname': _lastNameController.text, // Include last name
+        'firstname': _firstNameController.text,
+        'lastname': _lastNameController.text,
       }),
     );
 
@@ -40,7 +38,7 @@ class _RegisterPageState extends State<RegisterPage> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Registration successful')),
       );
-      Navigator.pop(context); // Go back to login page
+      Navigator.pop(context);
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Registration failed')),
@@ -81,9 +79,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     ),
                   ),
                 ),
-                SizedBox(
-                    width:
-                        10), // Spacing between first name and last name fields
+                SizedBox(width: 10),
                 Flexible(
                   child: TextField(
                     controller: _lastNameController,
@@ -155,8 +151,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     borderRadius: BorderRadius.circular(10.0)),
               ),
             ),
-          ], // Add closing square bracket here
-          // Remove the extra closing square bracket
+          ],
         ),
       ),
     );

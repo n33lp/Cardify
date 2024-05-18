@@ -1,9 +1,6 @@
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
-
-import 'questionanswer.dart'; // Import the QuestionAnswer class if it's in a separate file.
-
-// Ensure you have the QuestionAnswer class imported or defined as needed.
+import 'questionanswer.dart';
 
 class Document {
   String name;
@@ -51,7 +48,6 @@ class Document {
     if (docJson != null) {
       return Document.fromJson(jsonDecode(docJson));
     } else {
-      // Return a default document if nothing is saved
       return Document(
         name: 'New Document',
         createDate: DateTime.now(),
@@ -73,9 +69,7 @@ class Document {
     return 'Name: $name\nCreated: $createDate\nLast Edited: $lastEditedDate\nContent: $content\nStarred: $isStarred\nQuestions: ${questions.map((q) => q.toString()).join('\n')}';
   }
 
-  // Method to extract plain text from the content
   String plaintext() {
-    // Assuming the content is a JSON array of objects with an 'insert' field containing text
     if (content.isNotEmpty) {
       final decodedContent = jsonDecode(content);
       return decodedContent.map((block) => block['insert']).join('');

@@ -174,8 +174,7 @@ class _FlipCardPageState extends State<FlipCardPage> {
   }
 
   void fetchQuestions() async {
-    Document newDocument =
-        await Document.load(); // Assuming Document.load() fetches new data
+    Document newDocument = await Document.load();
     setState(() {
       widget.document.questions = newDocument.questions;
     });
@@ -213,12 +212,11 @@ class _FlipCardPageState extends State<FlipCardPage> {
             TextButton(
               child: Text("Save"),
               onPressed: () {
-                // Update the document with new values
                 setState(() {
                   qa.question = questionController.text;
                   qa.answer = answerController.text;
                 });
-                Navigator.of(context).pop(); // Close the dialog
+                Navigator.of(context).pop();
               },
             ),
           ],

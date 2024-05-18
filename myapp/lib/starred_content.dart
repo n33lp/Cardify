@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'folder.dart';
 import 'document.dart';
-import 'folder_contents.dart'; // Import the FolderContents widget you defined earlier
+import 'folder_contents.dart';
 import 'trashbin.dart';
-import 'profile.dart'; // Import the ProfilePage widget you defined earlier
+import 'profile.dart';
 
 class StarredContents extends StatefulWidget {
   final Folder folder;
@@ -25,7 +25,7 @@ class _StarredContentsState extends State<StarredContents> {
   void initState() {
     super.initState();
     currentFolder = widget.folder;
-    trashFolder = widget.trashFolder; // Initialize trashFolder from the widget
+    trashFolder = widget.trashFolder;
   }
 
   @override
@@ -70,7 +70,7 @@ class _StarredContentsState extends State<StarredContents> {
         tooltip: 'Add Item',
       ),
       bottomNavigationBar: BottomNavigationBar(
-        currentIndex: 0, // Update this based on current view
+        currentIndex: 0,
         onTap: (index) => _navigate(index),
         items: const [
           BottomNavigationBarItem(
@@ -85,18 +85,17 @@ class _StarredContentsState extends State<StarredContents> {
               icon: Icon(Icons.account_circle, color: Colors.black),
               label: 'Profile'),
         ],
-        selectedItemColor: Colors.black, // Keeps selected item label black
-        unselectedItemColor: Colors.grey, // Keeps unselected item label black
-        showUnselectedLabels:
-            true, // Explicitly ensure unselected labels are shown
-        showSelectedLabels: true, // Explicitly ensure selected labels are shown
+        selectedItemColor: Colors.black,
+        unselectedItemColor: Colors.grey,
+        showUnselectedLabels: true,
+        showSelectedLabels: true,
       ),
     );
   }
 
   Widget buildItemTile(dynamic item, int index) {
     return Dismissible(
-      key: Key('item_$index'), // Using index as part of the key
+      key: Key('item_$index'),
       direction: DismissDirection.endToStart,
       onDismissed: (direction) {
         setState(() {

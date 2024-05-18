@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'loginpage.dart'; // Import the FolderContents widget you defined earlier
+import 'loginpage.dart';
 
 void main() {
   runApp(MyApp());
@@ -10,7 +10,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Document Manager',
-      home: LoginPage(), // Start with the Login Page
+      home: LoginPage(),
     );
   }
 }
