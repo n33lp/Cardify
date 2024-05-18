@@ -60,13 +60,13 @@ def generate(content):
     answer_generation_chain, ques_list = llm_pipeline(content)
     clean_questions=remove_numbers_from_questions(ques_list)
     
-    # answer_generation_chain, ques_list = mock_llm_pipeline(content) 
+
     for question in clean_questions: 
         
         answer = answer_generation_chain.run(question)
         
         ques_json[question] = remove_first_space(answer)
-        # ques_json[question] = "answer: " + question
+
         
 
     return ques_json
@@ -130,7 +130,6 @@ async def test(request: Request):
         return JSONResponse(content={'message': 'Access denied'}, status_code=401)
     else:
         time.sleep(5)
-        # ques_json = generate(content)
         return JSONResponse(content={
             'message': 'Questions generated successfully',
             'total_questions': len(ques_json),

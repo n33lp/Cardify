@@ -27,7 +27,7 @@ with open("CREDS.json") as f:
     data = json.load(f)
     LLM=data['LLM_key']
    
-# APP usage
+
 @app.route('/register', methods=['POST'])
 def register():
     data = request.json
@@ -80,17 +80,16 @@ def login():
     else:
         return jsonify({'message': 'Invalid username or password'}), 401
 
-# General usage
+
 @app.route('/index', methods=['GET'])
 def GETindex():
-    # return jsonify([{'message': 'success'}]), 204
     return response('hellow world')
     
 @app.route('/all', methods=['GET'])
 def GETall():
     return jsonify([{"username": user.username, "email": user.email, "password": user.password, "token": user.token} for user in User.query.all()]), 200
 
-# LLM usage
+
 @app.route('/llm/validateUser', methods=['GET'])
 def validateforLLM():
     data = request.json
