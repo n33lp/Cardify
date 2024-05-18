@@ -28,9 +28,8 @@ from model import *
 
 app = FastAPI()
 
-app.mount("/static", StaticFiles(directory="static"), name="static")
 
-templates = Jinja2Templates(directory="templates")
+
 
 
 with open("CREDS.json") as f:
@@ -96,13 +95,47 @@ async def main(request: Request):
         return JSONResponse(content={
             'message': 'Questions generated successfully',
             'total_questions': len(ques_json),
-            'questions': ques_json
+            'questions': convert_json_to_listoflists(ques_json)
             }, status_code=200)
-        
 
-@app.get('/test') 
-async def test():
-    return JSONResponse(content={'server': 'live'}, status_code=200)
+def convert_json_to_listoflists(json_data):
+    data = []
+    for key, value in json_data.items():
+        data.append([key, value])
+    return data  
+
+@app.post('/test') 
+async def test(request: Request):
+    receiving_data = await request.json()
+    user = receiving_data['user']
+    usertoken = receiving_data['usertoken']
+    content = receiving_data['content']
+
+    
+    ques_json= {
+        'What is the capital of India?': 'New Delhi',
+        'What is the capital of Japan?': 'Tokyo',
+        'What is the capital of USA?': 'Washington DC'
+    }    
+    sending_data = {
+        'user': user,
+        'usertoken': usertoken,
+        'llmtoken': LLMtoken
+    }
+    URL = USERVERIFY_URL + 'llm/validateUser'
+    
+    response = requests.get(URL, json=sending_data)
+    
+    if response.json()['access'] != True:
+        return JSONResponse(content={'message': 'Access denied'}, status_code=401)
+    else:
+        time.sleep(5)
+        # ques_json = generate(content)
+        return JSONResponse(content={
+            'message': 'Questions generated successfully',
+            'total_questions': len(ques_json),
+            'questions': convert_json_to_listoflists(ques_json)
+            }, status_code=200)
         
 if __name__ == "__main__":
     uvicorn.run("app:app", host='0.0.0.0', port=8000, reload=True)

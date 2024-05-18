@@ -64,6 +64,7 @@ flutter:
   assets:
     - images/stock_profilepic.png
     - creds/USER_CREDS.json
+    - creds/LLM_CREDS.json
 
 
   # To add assets to your application, add an assets section, like this:

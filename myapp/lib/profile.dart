@@ -5,6 +5,7 @@ import 'trashbin.dart';
 import 'starred_content.dart';
 import 'UserManager.dart';
 import 'loginpage.dart';
+import 'dart:convert';
 
 class ProfilePage extends StatefulWidget {
   final Folder folder;
@@ -37,9 +38,10 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget build(BuildContext context) {
     String userName = UserManager().userName ?? "Default Name";
     String userEmail = UserManager().userEmail ?? "default@example.com";
-    String userProfilePicUrl =
-        UserManager().userProfilePicUrl ?? "https://via.placeholder.com/150";
-
+    // String userProfilePicUrl =
+    //     UserManager().userProfilePicUrl ?? "https://via.placeholder.com/150";
+    final decodedBytes = base64Decode(UserManager().userProfilePicUrl);
+    final image = MemoryImage(decodedBytes);
     return Scaffold(
       appBar: AppBar(
         title: Text('Profile'),
@@ -59,7 +61,7 @@ class _ProfilePageState extends State<ProfilePage> {
           children: <Widget>[
             CircleAvatar(
               radius: 60,
-              backgroundImage: AssetImage('images/stock_profilepic.png'),
+              backgroundImage: image,
               backgroundColor: Colors.red,
             ),
             SizedBox(height: 30),

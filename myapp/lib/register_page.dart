@@ -16,6 +16,10 @@ class _RegisterPageState extends State<RegisterPage> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _firstNameController =
+      TextEditingController(); // Controller for first name
+  final TextEditingController _lastNameController =
+      TextEditingController(); // Controller for last name
 
   Future<void> register() async {
     var url = widget.apiData['REGISTER_URL'];
@@ -27,6 +31,8 @@ class _RegisterPageState extends State<RegisterPage> {
         'username': _usernameController.text,
         'email': _emailController.text,
         'password': _passwordController.text,
+        'firstname': _firstNameController.text, // Include first name
+        'lastname': _lastNameController.text, // Include last name
       }),
     );
 
@@ -59,6 +65,42 @@ class _RegisterPageState extends State<RegisterPage> {
               ),
             ),
             SizedBox(height: 40),
+            Row(
+              children: [
+                Flexible(
+                  child: TextField(
+                    controller: _firstNameController,
+                    decoration: InputDecoration(
+                      labelText: 'First Name',
+                      prefixIcon: Icon(Icons.person_outline),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                      contentPadding: EdgeInsets.symmetric(
+                          vertical: 10.0, horizontal: 10.0),
+                    ),
+                  ),
+                ),
+                SizedBox(
+                    width:
+                        10), // Spacing between first name and last name fields
+                Flexible(
+                  child: TextField(
+                    controller: _lastNameController,
+                    decoration: InputDecoration(
+                      labelText: 'Last Name',
+                      prefixIcon: Icon(Icons.person_outline),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                      contentPadding: EdgeInsets.symmetric(
+                          vertical: 10.0, horizontal: 10.0),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: 20),
             TextField(
               controller: _usernameController,
               decoration: InputDecoration(
@@ -110,11 +152,11 @@ class _RegisterPageState extends State<RegisterPage> {
                 foregroundColor: Colors.white,
                 padding: EdgeInsets.symmetric(horizontal: 30, vertical: 10),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10.0),
-                ),
+                    borderRadius: BorderRadius.circular(10.0)),
               ),
             ),
-          ],
+          ], // Add closing square bracket here
+          // Remove the extra closing square bracket
         ),
       ),
     );

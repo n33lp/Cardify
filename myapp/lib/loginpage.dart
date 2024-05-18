@@ -35,11 +35,14 @@ class _LoginPageState extends State<LoginPage> {
       }),
     );
     if (response.statusCode == 200) {
+      final responseData = jsonDecode(response.body);
       // Example user data, replace with actual data from response if available
       UserManager().setUser(
-          name: "John Doe Test", // implement api response here
-          email: "johndoe@example.com",
-          picUrl: "https://via.placeholder.com/150");
+          name: responseData['firstname'] + " " + responseData['lastname'],
+          email: responseData['email'],
+          picUrl: responseData['profilepic'],
+          token: responseData['token'],
+          id: _usernameController.text);
       Folder rootFolder = Folder(
         name: "Root",
         createDate: DateTime.now(),
@@ -78,7 +81,6 @@ class _LoginPageState extends State<LoginPage> {
 
   Future<void> loadApiData() async {
     apiData = await readJson();
-    print('API Data loaded: $apiData');
   }
 
   @override

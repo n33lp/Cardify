@@ -153,7 +153,7 @@ class _DocumentViewState extends State<DocumentView> {
           .toDelta()
           .toJson()); // Save the full delta as JSON
     });
-    print("saving as widget.document.content ${widget.document.content}");
+    // print("saving as widget.document.content ${widget.document.content}");
     await widget.document
         .save(); // Make sure your save method handles this JSON appropriately
     widget.onUpdate(

@@ -1,4 +1,5 @@
 import 'dart:convert';
+
 import 'questionanswer.dart';
 import 'package:flutter/material.dart';
 import 'folder.dart';
@@ -9,6 +10,9 @@ import 'trashbin.dart'; // Import the TrashContents widget you defined earlier
 import 'profile.dart'; // Import the ProfilePage widget you defined earlier
 import 'documentView.dart'; // Import the DocumentView widget you defined earlier
 import 'flip_card.dart'; // Import the FlipCardPage widget you defined earlier
+import 'package:http/http.dart' as http;
+import 'UserManager.dart';
+import 'package:flutter/services.dart';
 
 class FolderContents extends StatefulWidget {
   final Folder folder;
@@ -24,13 +28,54 @@ class FolderContents extends StatefulWidget {
 class _FolderContentsState extends State<FolderContents> {
   late Folder currentFolder;
   late Folder trashFolder;
+  late Map<String, dynamic> apiData;
+  List<dynamic> newQuestions = [];
 
   String searchText = "";
   @override
   void initState() {
     super.initState();
+    loadApiData();
     currentFolder = widget.folder;
     trashFolder = widget.trashFolder; // Initialize trashFolder from the widget
+  }
+
+  Future<bool> getQuestions(String content) async {
+    var questionsUrl = apiData['TEST_LLM_URL'];
+
+    try {
+      var response = await http.post(
+        Uri.parse(questionsUrl),
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode({
+          'user': UserManager().userID,
+          'usertoken': UserManager().usertoken,
+          'content': content,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        final responseData = jsonDecode(response.body);
+        newQuestions = responseData['questions'] as List;
+        return true;
+      } else {
+        print("Failed to fetch questions: ${response.statusCode}");
+        return false;
+      }
+    } catch (e) {
+      print("Error fetching questions: $e");
+      return false;
+    }
+  }
+
+  Future<Map<String, dynamic>> readJson() async {
+    final String response = await rootBundle.loadString('creds/LLM_CREDS.json');
+    final data = await json.decode(response);
+    return data;
+  }
+
+  Future<void> loadApiData() async {
+    apiData = await readJson();
   }
 
   @override
@@ -78,19 +123,10 @@ class _FolderContentsState extends State<FolderContents> {
         onTap: (index) {
           switch (index) {
             case 0:
-              // NavigationManager.navigateTo(context, "FolderContents");
-              // move to parent folder
-              print("Home");
               break;
             case 1:
               // NavigationManager.navigateTo(context, "Starred");
-              print("Starred");
-              // Navigator.pushReplacement(
-              //   context,
-              //   MaterialPageRoute(
-              //       builder: (context) =>
-              //           StarredContents(folder: currentFolder)),
-              // );
+
               Navigator.pushReplacement(
                 context,
                 PageRouteBuilder(
@@ -103,13 +139,7 @@ class _FolderContentsState extends State<FolderContents> {
               break;
             case 2:
               // NavigationManager.navigateTo(context, "Trash");
-              print("Trash");
-              // Navigator.pushReplacement(
-              //   context,
-              //   MaterialPageRoute(
-              //       builder: (context) => TrashContents(
-              //           folder: currentFolder, trashFolder: trashFolder)),
-              // );
+
               Navigator.pushReplacement(
                 context,
                 PageRouteBuilder(
@@ -122,7 +152,7 @@ class _FolderContentsState extends State<FolderContents> {
               break;
             case 3:
               // NavigationManager.navigateTo(context, "Profile");
-              print("Profile");
+
               Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -158,36 +188,47 @@ class _FolderContentsState extends State<FolderContents> {
   Widget buildItemTile(dynamic item, int index) {
     return Dismissible(
       key: Key('item_$index'), // Using index as part of the key
-      // direction: DismissDirection.endToStart,
-      // onDismissed: (direction) {
-      //   setState(() {
-      //     moveToTrash(item);
-      //   });
-      // },
+
       direction:
           DismissDirection.horizontal, // Allow swiping in both directions
-      onDismissed: (direction) {
+      onDismissed: (direction) async {
         if (direction == DismissDirection.endToStart) {
-          // Handle trash action for Document
-          print('trashing item: ${item.name}');
-
           moveToTrash(item);
         } else if (direction == DismissDirection.startToEnd) {
           if (item is Document) {
-            print('moving to flip card page for document: ${item.name}');
-            // Navigate to FlipCardPage for Document
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => FlipCardPage(
-                    document: item,
-                    folder: currentFolder,
-                    trashFolder: trashFolder),
-              ),
-            );
+            if (item.questions.isEmpty) {
+              showLoadingDialog(context); // Show the loading dialog
+              var success = await getQuestions(item.plaintext());
+              Navigator.pop(context); // Dismiss the loading dialog
+              if (success) {
+                _addNewQuestion(item, newQuestions);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => FlipCardPage(
+                        document: item,
+                        folder: currentFolder,
+                        trashFolder: trashFolder),
+                  ),
+                );
+              } else {
+                print("Failed to fetch questions, not navigating.");
+              }
+            } else {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => FlipCardPage(
+                      document: item,
+                      folder: currentFolder,
+                      trashFolder: trashFolder),
+                ),
+              );
+            }
           }
         }
       },
+
       background: Container(
         color: Colors.blue, // Color for FlipCard action
         alignment: Alignment.centerLeft,
@@ -227,8 +268,6 @@ class _FolderContentsState extends State<FolderContents> {
                     builder: (context) => FolderContents(
                         folder: item, trashFolder: trashFolder)));
           } else if (item is Document) {
-            print('moving to document view');
-            print(item.name);
             Navigator.push(
               context,
               MaterialPageRoute(
@@ -365,17 +404,42 @@ class _FolderContentsState extends State<FolderContents> {
                     content: jsonEncode([
                       {"insert": "\n"}
                     ]),
-                    questions: [qa1, qa2],
+                    // questions: [qa1, qa2],
+                    questions: [],
                     isStarred: false,
                   );
                   currentFolder.documents.add(addingDocument);
-                  print(
-                      'adding as addingDocument.content: ${addingDocument.content}');
                 });
                 Navigator.of(context).pop();
               },
             ),
           ],
+        );
+      },
+    );
+  }
+
+  void _addNewQuestion(Document document, List<dynamic> Questions) {
+    for (List pair in Questions) {
+      var qa = QuestionAnswer(question: pair[0], answer: pair[1]);
+      document.questions.add(qa);
+    }
+  }
+
+  void showLoadingDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierDismissible:
+          false, // User must not close the dialog by tapping outside of it.
+      builder: (BuildContext context) {
+        return AlertDialog(
+          content: Row(
+            children: [
+              CircularProgressIndicator(),
+              SizedBox(width: 24),
+              Text("Loading, please wait..."),
+            ],
+          ),
         );
       },
     );

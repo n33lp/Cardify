@@ -72,4 +72,14 @@ class Document {
   String toString() {
     return 'Name: $name\nCreated: $createDate\nLast Edited: $lastEditedDate\nContent: $content\nStarred: $isStarred\nQuestions: ${questions.map((q) => q.toString()).join('\n')}';
   }
+
+  // Method to extract plain text from the content
+  String plaintext() {
+    // Assuming the content is a JSON array of objects with an 'insert' field containing text
+    if (content.isNotEmpty) {
+      final decodedContent = jsonDecode(content);
+      return decodedContent.map((block) => block['insert']).join('');
+    }
+    return '';
+  }
 }
