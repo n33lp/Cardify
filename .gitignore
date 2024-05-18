@@ -162,3 +162,4 @@ mistral-7b-instruct-v0.1.Q4_K_S.gguf
 .DS_Store
 USER_API/.DS_Store
 USER_API/instance/database.db
+myapp/lib/testuser.txt
