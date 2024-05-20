@@ -1,4 +1,5 @@
-# Document Manager App
+# Cardify
+Simplified Studying
 
 ## Overview
 
