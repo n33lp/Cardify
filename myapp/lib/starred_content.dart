@@ -1,3 +1,7 @@
+/*
+  this class is used to display the starred contents of the user.
+*/
+
 import 'package:flutter/material.dart';
 import 'folder.dart';
 import 'document.dart';

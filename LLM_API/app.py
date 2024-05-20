@@ -1,16 +1,20 @@
+'''
+This is the main file where the FastAPI application is defined.
+This is repsonsible for generating questions from the given content.
+This api is called by the frontend to generate questions.
+User data is verified via another api.
+'''
+
 import re
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, RedirectResponse
 import requests
-from fastapi import FastAPI, Form, Request, Response, File, Depends, HTTPException, status
-from fastapi.responses import RedirectResponse
-from fastapi.staticfiles import StaticFiles
+from fastapi import FastAPI, Form, Request, Response, HTTPException, status
 from fastapi.templating import Jinja2Templates
 from fastapi.encoders import jsonable_encoder
 from langchain_community.llms import CTransformers
 from langchain.chains import QAGenerationChain
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.docstore.document import Document
-from langchain_community.document_loaders import PyPDFLoader
 from langchain.prompts import PromptTemplate
 from langchain_community.embeddings import HuggingFaceBgeEmbeddings
 from langchain_community.vectorstores import FAISS
@@ -22,15 +26,10 @@ import time
 import uvicorn
 import aiofiles
 from PyPDF2 import PdfReader
-import csv
 from langchain_community.output_parsers.rail_parser import GuardrailsOutputParser
 from model import *
 
 app = FastAPI()
-
-
-
-
 
 with open("CREDS.json") as f:
     content = json.load(f)

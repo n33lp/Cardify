@@ -1,3 +1,7 @@
+/*
+This file contains the Document class, which represents a document in the app.
+*/
+
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'questionanswer.dart';

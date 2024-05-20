@@ -1,3 +1,11 @@
+/*
+  This file contains the DocumentView class which is a StatefulWidget that displays a document.
+  The document can be edited and saved.
+  The document is saved to the device's local storage.
+  The document is loaded from the device's local storage.
+  The document is updated in the parent widget.
+*/
+
 import 'package:dart_quill_delta/src/delta/delta.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';

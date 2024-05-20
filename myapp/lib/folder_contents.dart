@@ -1,5 +1,12 @@
-import 'dart:convert';
+/*
+  This file contains the FolderContents class which is a StatefulWidget.
+  It displays the contents of a folder and allows the user to interact with the contents.
+  The user can add folders and documents, view the contents of a document, star/unstar items, and move items to the trash.
+  The user can also search for items in the folder.
+  The user can navigate to the StarredContents, TrashContents, and ProfilePage screens using the BottomNavigationBar.
+*/
 
+import 'dart:convert';
 import 'questionanswer.dart';
 import 'package:flutter/material.dart';
 import 'folder.dart';

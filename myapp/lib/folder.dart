@@ -1,3 +1,11 @@
+/*
+  Folder class
+  - Represents a folder in the file system
+  - Contains a list of documents and subfolders
+  - Can be starred
+  - Can be converted to and from JSON
+*/
+
 import 'document.dart';
 
 class Folder {

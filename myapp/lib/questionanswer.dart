@@ -1,3 +1,6 @@
+/*
+Simple class to hold a pair of question and answer.
+*/
 class QuestionAnswer {
   String question;
 

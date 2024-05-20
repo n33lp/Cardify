@@ -1,3 +1,6 @@
+/*
+this is the profile page where the user can see their profile details and logout
+*/
 import 'package:flutter/material.dart';
 import 'folder.dart';
 import 'folder_contents.dart';

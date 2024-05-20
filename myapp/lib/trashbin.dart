@@ -1,3 +1,7 @@
+/*
+this is the trashbin page where the user can see the deleted files and folders
+*/
+
 import 'package:flutter/material.dart';
 import 'folder.dart';
 import 'starred_content.dart';

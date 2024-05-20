@@ -1,3 +1,15 @@
+/*
+  LoginPage class
+  This class is the login page of the application.
+  It contains a form with two text fields for username and password.
+  The user can enter their credentials and click the login button to login.
+  The login button calls the login function which sends a POST request to the server with the entered credentials.
+  If the credentials are correct, the server responds with the user's data and the user is logged in.
+  If the credentials are incorrect, the server responds with an error message and the user is not logged in.
+  The user can also click the register button to navigate to the register page.
+
+*/
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';

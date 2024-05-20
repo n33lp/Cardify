@@ -1,4 +1,10 @@
-''' FLASK SERVER '''
+'''
+FLASK SERVER
+This is the main file for the flask server. It contains the routes for the server and the database model.
+The server is used to register and login users. It also has a route to validate users for the LLM server.
+The server is connected to a sqlite database to store user information.
+The server is also connected to a file that contains the LLM key to verify the LLM server.
+'''
 
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
@@ -13,6 +19,7 @@ db = SQLAlchemy(app)
 with open('STOCKIMAGE.txt') as f:
     STOCKIMAGE = f.readline()
 
+# Database model for user
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
@@ -28,6 +35,7 @@ with open("CREDS.json") as f:
     LLM=data['LLM_key']
    
 
+# To register new users.
 @app.route('/register', methods=['POST'])
 def register():
     data = request.json
@@ -41,11 +49,7 @@ def register():
     if username=='' or email=='' or firstname=='' or lastname=='' or password=='':
         return jsonify({'message': 'Please fill all the fields'}), 400
     
-
     new_user = User(username=username,firstname=firstname,lastname=lastname, email=email, password=password, token = token,profilepic=STOCKIMAGE)
-
-    
-    
     
     if User.query.filter_by(username=username).first() and User.query.filter_by(email=email).first():
         return jsonify({'message': "Username and Email already exists, click 'Forgot Password'."}), 409
@@ -60,6 +64,7 @@ def register():
     db.session.commit()
     return jsonify({'message': 'User created successfully','access_token': token})
 
+# This is the login route.
 @app.route('/login', methods=['POST'])
 def login():
     data = request.json
@@ -81,20 +86,22 @@ def login():
         return jsonify({'message': 'Invalid username or password'}), 401
 
 
+# Testing the server
 @app.route('/index', methods=['GET'])
 def GETindex():
-    return response('hellow world')
-    
+    return response('hello world')
+
+# This route is used to get all the users in the database.
 @app.route('/all', methods=['GET'])
 def GETall():
     return jsonify([{"username": user.username, "email": user.email, "password": user.password, "token": user.token} for user in User.query.all()]), 200
 
-
+# This route is used to validate users for the LLM server.
 @app.route('/llm/validateUser', methods=['GET'])
 def validateforLLM():
     data = request.json
    
-    if not validateforLLM(data):
+    if not validateLLM(data):
         return jsonify({'message': 'Access denied'}), 401
     
     if validateUserandToken(data):
@@ -102,10 +109,12 @@ def validateforLLM():
     
     return jsonify({'message': 'User not validated successfully', 'access': False}), 200
    
-def validateforLLM(data):
+# This function validates the LLM key.
+def validateLLM(data):
     llmtoken = data['llmtoken']
     return True if llmtoken == LLM else False
-   
+
+# This function validates the user and token.
 def validateUserandToken(data):
     user = data['user']
     usertoken = data['usertoken']

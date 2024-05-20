@@ -1,3 +1,6 @@
+/*
+to be removed
+*/
 import 'package:flutter/material.dart';
 
 class NavigationManager {

@@ -1,3 +1,7 @@
+/*
+ This class is to view all ther questions for that document.
+*/
+
 import 'package:flutter/material.dart';
 import 'package:flip_card/flip_card.dart';
 import 'document.dart';

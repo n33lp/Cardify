@@ -1,3 +1,6 @@
+/*
+ main.dart is the entry point of the application.
+*/
 import 'package:flutter/material.dart';
 import 'loginpage.dart';
 

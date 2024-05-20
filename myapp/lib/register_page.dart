@@ -1,3 +1,8 @@
+/*
+this class is used to register a new user.
+connects with the backend to register the user.
+*/
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
